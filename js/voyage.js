@@ -25,20 +25,93 @@ let voyageState = {
 
 // 动画配置
 const VOYAGE_CONFIG = {
-    duration: 8000,          // 总动画时长（毫秒）
-    starCount: 2000,         // 星空粒子数量
+    duration: 15000,         // 总动画时长（毫秒）- 延长以适应地球环绕
+    starCount: 1000,         // 星空粒子数量（优化：从2000减少到1000）
+    targetFPS: 60,           // 目标帧率
     cameraPath: [
-        { position: [0, 0, 100], target: [0, 0, 0], duration: 2000 },    // 太阳系全景
-        { position: [20, 10, 50], target: [0, 0, 0], duration: 2000 },   // 接近内行星
-        { position: [10, 5, 25], target: [8, 0, 0], duration: 2000 },    // 聚焦地球轨道
-        { position: [12, 2, 15], target: [8, 0, 0], duration: 2000 }     // 地球特写
+        { position: [0, 0, 150], target: [0, 0, 0], duration: 2500 },    // 太阳系全景（更远视角）
+        { position: [50, 20, 100], target: [0, 0, 0], duration: 2500 },  // 接近内行星区域
+        { position: [25, 10, 60], target: [8, 0, 0], duration: 2500 },   // 聚焦地球轨道区域
+        { position: [15, 5, 25], target: [8, 0, 0], duration: 2500 },    // 接近地球
+        { position: [10, 2, 12], target: [8, 0, 0], duration: 2500 },    // 地球近距离
+        { position: [8.5, 1, 8.5], target: [8, 0, 0], duration: 2500 }  // 地球表面附近，开始环绕
     ],
+    // 地球环绕动画配置
+    earthOrbit: {
+        radius: 1.5,         // 环绕半径
+        height: 0.5,         // 环绕高度变化
+        speed: 0.002,        // 环绕速度
+        duration: 5000       // 环绕持续时间
+    },
     planets: {
         sun: { radius: 2, position: [0, 0, 0], color: 0xFFAA00 },
-        mercury: { radius: 0.2, position: [3, 0, 0], color: 0x8C7853, orbit: 3 },
-        venus: { radius: 0.4, position: [4.5, 0, 0], color: 0xFFC649, orbit: 4.5 },
-        earth: { radius: 0.5, position: [8, 0, 0], color: 0x6B93D6, orbit: 8 },
-        mars: { radius: 0.3, position: [12, 0, 0], color: 0xCD5C5C, orbit: 12 }
+        // 内行星 - 添加不同的轨道角度和运动速度
+        mercury: { 
+            radius: 0.15, 
+            orbitRadius: 4, 
+            orbitAngle: 0, 
+            orbitSpeed: 0.04,
+            color: 0x8C7853, 
+            orbit: 4 
+        },
+        venus: { 
+            radius: 0.35, 
+            orbitRadius: 6, 
+            orbitAngle: Math.PI * 0.3, 
+            orbitSpeed: 0.025,
+            color: 0xFFC649, 
+            orbit: 6 
+        },
+        earth: { 
+            radius: 0.4, 
+            orbitRadius: 8, 
+            orbitAngle: Math.PI * 0.6, 
+            orbitSpeed: 0.02,
+            color: 0x6B93D6, 
+            orbit: 8 
+        },
+        mars: { 
+            radius: 0.25, 
+            orbitRadius: 12, 
+            orbitAngle: Math.PI * 0.9, 
+            orbitSpeed: 0.015,
+            color: 0xCD5C5C, 
+            orbit: 12 
+        },
+        // 外行星
+        jupiter: { 
+            radius: 1.2, 
+            orbitRadius: 20, 
+            orbitAngle: Math.PI * 1.2, 
+            orbitSpeed: 0.008,
+            color: 0xD8CA9D, 
+            orbit: 20 
+        },
+        saturn: { 
+            radius: 1.0, 
+            orbitRadius: 30, 
+            orbitAngle: Math.PI * 1.5, 
+            orbitSpeed: 0.006,
+            color: 0xFAD5A5, 
+            orbit: 30, 
+            hasRings: true 
+        },
+        uranus: { 
+            radius: 0.6, 
+            orbitRadius: 45, 
+            orbitAngle: Math.PI * 1.8, 
+            orbitSpeed: 0.004,
+            color: 0x4FD0E7, 
+            orbit: 45 
+        },
+        neptune: { 
+            radius: 0.58, 
+            orbitRadius: 60, 
+            orbitAngle: Math.PI * 0.1, 
+            orbitSpeed: 0.003,
+            color: 0x4B70DD, 
+            orbit: 60 
+        }
     }
 };
 
@@ -98,6 +171,7 @@ function createStarField() {
     const starGeometry = new THREE.BufferGeometry();
     const starPositions = new Float32Array(VOYAGE_CONFIG.starCount * 3);
     const starColors = new Float32Array(VOYAGE_CONFIG.starCount * 3);
+    const starSizes = new Float32Array(VOYAGE_CONFIG.starCount);
     
     for (let i = 0; i < VOYAGE_CONFIG.starCount; i++) {
         const i3 = i * 3;
@@ -113,25 +187,80 @@ function createStarField() {
         
         // 随机颜色（蓝白色调）
         const brightness = Math.random() * 0.5 + 0.5;
-        starColors[i3] = brightness;
-        starColors[i3 + 1] = brightness * (0.8 + Math.random() * 0.2);
-        starColors[i3 + 2] = brightness;
+        const colorVariation = Math.random();
+        
+        if (colorVariation < 0.7) {
+            // 白色星星
+            starColors[i3] = brightness;
+            starColors[i3 + 1] = brightness * (0.9 + Math.random() * 0.1);
+            starColors[i3 + 2] = brightness;
+        } else if (colorVariation < 0.9) {
+            // 蓝色星星
+            starColors[i3] = brightness * 0.7;
+            starColors[i3 + 1] = brightness * 0.8;
+            starColors[i3 + 2] = brightness;
+        } else {
+            // 红色星星
+            starColors[i3] = brightness;
+            starColors[i3 + 1] = brightness * 0.6;
+            starColors[i3 + 2] = brightness * 0.4;
+        }
+        
+        // 随机大小
+        starSizes[i] = Math.random() * 2 + 0.5;
     }
     
     starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
     starGeometry.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+    starGeometry.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
     
     const starMaterial = new THREE.PointsMaterial({
         size: 1,
         vertexColors: true,
         transparent: true,
-        opacity: 0.8
+        opacity: 0.8,
+        sizeAttenuation: true,
+        blending: THREE.AdditiveBlending
     });
     
     voyageState.stars = new THREE.Points(starGeometry, starMaterial);
     voyageState.scene.add(voyageState.stars);
     
+    // 添加星云效果
+    createNebula();
+    
     console.log('✅ 星空背景创建完成');
+}
+
+/**
+ * 创建星云效果
+ */
+function createNebula() {
+    const nebulaGeometry = new THREE.PlaneGeometry(100, 100);
+    const nebulaMaterial = new THREE.MeshBasicMaterial({
+        color: 0x4444ff,
+        transparent: true,
+        opacity: 0.1,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending
+    });
+    
+    // 创建多个星云层
+    for (let i = 0; i < 3; i++) {
+        const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial.clone());
+        nebula.position.set(
+            (Math.random() - 0.5) * 200,
+            (Math.random() - 0.5) * 200,
+            (Math.random() - 0.5) * 200
+        );
+        nebula.rotation.set(
+            Math.random() * Math.PI,
+            Math.random() * Math.PI,
+            Math.random() * Math.PI
+        );
+        nebula.material.opacity = 0.05 + Math.random() * 0.05;
+        voyageState.scene.add(nebula);
+    }
 }
 
 /**
@@ -149,11 +278,33 @@ function createSolarSystem() {
     voyageState.planets.sun.position.set(...VOYAGE_CONFIG.planets.sun.position);
     voyageState.scene.add(voyageState.planets.sun);
     
-    // 添加太阳光源
-    const sunLight = new THREE.PointLight(0xFFFFFF, 2, 100);
+    // 添加太阳光晕效果
+    const coronaGeometry = new THREE.SphereGeometry(VOYAGE_CONFIG.planets.sun.radius * 1.5, 32, 32);
+    const coronaMaterial = new THREE.MeshBasicMaterial({
+        color: 0xFFAA00,
+        transparent: true,
+        opacity: 0.2,
+        side: THREE.BackSide,
+        blending: THREE.AdditiveBlending
+    });
+    const corona = new THREE.Mesh(coronaGeometry, coronaMaterial);
+    corona.position.copy(voyageState.planets.sun.position);
+    voyageState.scene.add(corona);
+    
+    // 增强太阳光源强度
+    const sunLight = new THREE.PointLight(0xFFFFFF, 3, 150);
     sunLight.position.set(0, 0, 0);
     sunLight.castShadow = true;
     voyageState.scene.add(sunLight);
+    
+    // 增加环境光强度，让行星更明亮
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.8);
+    voyageState.scene.add(ambientLight);
+    
+    // 添加额外的定向光源来照亮远处的行星
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(10, 10, 10);
+    voyageState.scene.add(directionalLight);
     
     // 创建行星
     Object.keys(VOYAGE_CONFIG.planets).forEach(planetName => {
@@ -161,12 +312,44 @@ function createSolarSystem() {
         
         const planetConfig = VOYAGE_CONFIG.planets[planetName];
         const geometry = new THREE.SphereGeometry(planetConfig.radius, 16, 16);
-        const material = new THREE.MeshLambertMaterial({ color: planetConfig.color });
+        
+        // 为不同行星创建更亮的材质
+        let material;
+        if (planetName === 'earth') {
+            material = new THREE.MeshLambertMaterial({ 
+                color: planetConfig.color,
+                emissive: 0x001122,
+                emissiveIntensity: 0.2
+            });
+        } else {
+            // 为其他行星添加自发光效果，让它们更明亮
+            const emissiveColor = new THREE.Color(planetConfig.color).multiplyScalar(0.3);
+            material = new THREE.MeshLambertMaterial({ 
+                color: planetConfig.color,
+                emissive: emissiveColor,
+                emissiveIntensity: 0.4
+            });
+        }
         
         const planet = new THREE.Mesh(geometry, material);
-        planet.position.set(...planetConfig.position);
+        
+        // 根据轨道半径和角度计算初始位置
+        const orbitRadius = planetConfig.orbitRadius;
+        const orbitAngle = planetConfig.orbitAngle;
+        const x = Math.cos(orbitAngle) * orbitRadius;
+        const z = Math.sin(orbitAngle) * orbitRadius;
+        const y = 0; // 保持在同一平面
+        
+        planet.position.set(x, y, z);
         planet.castShadow = true;
         planet.receiveShadow = true;
+        
+        // 存储轨道信息用于动画
+        planet.userData = {
+            orbitRadius: orbitRadius,
+            orbitAngle: orbitAngle,
+            orbitSpeed: planetConfig.orbitSpeed
+        };
         
         voyageState.planets[planetName] = planet;
         voyageState.scene.add(planet);
@@ -178,21 +361,58 @@ function createSolarSystem() {
             const atmosphereMaterial = new THREE.MeshBasicMaterial({
                 color: 0x87CEEB,
                 transparent: true,
-                opacity: 0.2,
-                side: THREE.BackSide
+                opacity: 0.3,
+                side: THREE.BackSide,
+                blending: THREE.AdditiveBlending
             });
             const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
             atmosphere.position.copy(planet.position);
             voyageState.scene.add(atmosphere);
+            
+            // 存储大气层引用用于位置同步
+            planet.userData.atmosphere = atmosphere;
+            
+            // 添加城市灯光效果
+            const lightsGeometry = new THREE.SphereGeometry(planetConfig.radius * 1.01, 16, 16);
+            const lightsMaterial = new THREE.MeshBasicMaterial({
+                color: 0xFFFF88,
+                transparent: true,
+                opacity: 0.1,
+                blending: THREE.AdditiveBlending
+            });
+            const lights = new THREE.Mesh(lightsGeometry, lightsMaterial);
+            lights.position.copy(planet.position);
+            voyageState.scene.add(lights);
+            
+            // 存储城市灯光引用用于位置同步
+            planet.userData.lights = lights;
         }
         
-        // 创建轨道线
-        if (planetConfig.orbit) {
-            const orbitGeometry = new THREE.RingGeometry(planetConfig.orbit - 0.1, planetConfig.orbit + 0.1, 64);
-            const orbitMaterial = new THREE.MeshBasicMaterial({
-                color: 0x444444,
+        // 为大行星添加光环效果，增加可见性
+        if (planetName === 'jupiter' || planetName === 'saturn') {
+            const glowGeometry = new THREE.SphereGeometry(planetConfig.radius * 1.2, 16, 16);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+                color: planetConfig.color,
                 transparent: true,
                 opacity: 0.3,
+                side: THREE.BackSide,
+                blending: THREE.AdditiveBlending
+            });
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            glow.position.copy(planet.position);
+            voyageState.scene.add(glow);
+            
+            // 存储光环引用用于位置同步
+            planet.userData.glow = glow;
+        }
+        
+        // 创建轨道线，增加透明度让它们更明显
+        if (planetConfig.orbit) {
+            const orbitGeometry = new THREE.RingGeometry(planetConfig.orbit - 0.05, planetConfig.orbit + 0.05, 64);
+            const orbitMaterial = new THREE.MeshBasicMaterial({
+                color: 0x888888,
+                transparent: true,
+                opacity: 0.4,
                 side: THREE.DoubleSide
             });
             const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
@@ -243,10 +463,9 @@ function startVoyageAnimation() {
     // 开始渲染循环
     renderLoop();
     
-    // 设置动画完成回调
-    setTimeout(() => {
-        completeVoyageAnimation();
-    }, VOYAGE_CONFIG.duration);
+    // 移除自动结束机制，让动画持续运行
+    // 用户可以通过刷新页面或其他方式结束动画
+    console.log('🌍 动画将持续运行，不会自动结束');
 }
 
 /**
@@ -255,13 +474,58 @@ function startVoyageAnimation() {
 function animateCamera() {
     let currentPathIndex = 0;
     let startTime = Date.now();
+    let lastFrameTime = Date.now();
+    const frameInterval = 1000 / VOYAGE_CONFIG.targetFPS;
+    let orbitStartTime = null;
+    let isOrbiting = false;
     
     function updateCamera() {
         if (!voyageState.isActive) return;
         
         const currentTime = Date.now();
+        const deltaTime = currentTime - lastFrameTime;
+        
+        // 帧率控制
+        if (deltaTime < frameInterval) {
+            requestAnimationFrame(updateCamera);
+            return;
+        }
+        
+        lastFrameTime = currentTime;
         const elapsed = currentTime - startTime;
         
+        // 检查是否完成所有路径点，开始地球环绕
+        if (currentPathIndex >= VOYAGE_CONFIG.cameraPath.length) {
+            if (!isOrbiting) {
+                isOrbiting = true;
+                orbitStartTime = currentTime;
+                console.log('🌍 开始地球环绕动画');
+            }
+            
+            // 地球环绕动画
+            const orbitElapsed = currentTime - orbitStartTime;
+            const orbitProgress = Math.min(orbitElapsed / VOYAGE_CONFIG.earthOrbit.duration, 1);
+            
+            if (orbitProgress < 1) {
+                // 计算环绕位置
+                const earthPos = VOYAGE_CONFIG.planets.earth.position;
+                const angle = orbitElapsed * VOYAGE_CONFIG.earthOrbit.speed;
+                const radius = VOYAGE_CONFIG.earthOrbit.radius;
+                const height = Math.sin(angle * 0.5) * VOYAGE_CONFIG.earthOrbit.height;
+                
+                const orbitX = earthPos[0] + Math.cos(angle) * radius;
+                const orbitY = earthPos[1] + height;
+                const orbitZ = earthPos[2] + Math.sin(angle) * radius;
+                
+                voyageState.camera.position.set(orbitX, orbitY, orbitZ);
+                voyageState.camera.lookAt(earthPos[0], earthPos[1], earthPos[2]);
+            }
+            
+            requestAnimationFrame(updateCamera);
+            return;
+        }
+        
+        // 正常路径动画
         if (currentPathIndex < VOYAGE_CONFIG.cameraPath.length) {
             const currentPath = VOYAGE_CONFIG.cameraPath[currentPathIndex];
             const progress = Math.min(elapsed / currentPath.duration, 1);
@@ -302,23 +566,57 @@ function animateCamera() {
 }
 
 /**
- * 渲染循环
+ * 渲染循环（优化版）
  */
 function renderLoop() {
     if (!voyageState.isActive) return;
     
-    // 旋转行星
+    const currentTime = Date.now();
+    const deltaTime = currentTime - (voyageState.lastRenderTime || currentTime);
+    voyageState.lastRenderTime = currentTime;
+    
+    // 基于时间的动画，确保不同帧率下的一致性
+    const rotationSpeed = 0.001 * deltaTime;
+    
+    // 旋转行星并更新轨道位置
     Object.keys(voyageState.planets).forEach(planetName => {
+        const planet = voyageState.planets[planetName];
+        
         if (planetName === 'sun') {
-            voyageState.planets[planetName].rotation.y += 0.01;
+            planet.rotation.y += rotationSpeed * 10;
         } else {
-            voyageState.planets[planetName].rotation.y += 0.02;
+            // 行星自转
+            planet.rotation.y += rotationSpeed * 20;
+            
+            // 行星轨道运动
+            if (planet.userData && planet.userData.orbitRadius) {
+                // 更新轨道角度
+                planet.userData.orbitAngle += planet.userData.orbitSpeed * deltaTime * 0.001;
+                
+                // 计算新位置
+                const x = Math.cos(planet.userData.orbitAngle) * planet.userData.orbitRadius;
+                const z = Math.sin(planet.userData.orbitAngle) * planet.userData.orbitRadius;
+                const y = 0;
+                
+                planet.position.set(x, y, z);
+                
+                // 同步特殊效果的位置
+                if (planet.userData.atmosphere) {
+                    planet.userData.atmosphere.position.copy(planet.position);
+                }
+                if (planet.userData.lights) {
+                    planet.userData.lights.position.copy(planet.position);
+                }
+                if (planet.userData.glow) {
+                    planet.userData.glow.position.copy(planet.position);
+                }
+            }
         }
     });
     
     // 缓慢旋转星空
     if (voyageState.stars) {
-        voyageState.stars.rotation.y += 0.0005;
+        voyageState.stars.rotation.y += rotationSpeed * 0.5;
     }
     
     // 渲染场景
@@ -392,7 +690,7 @@ function showVoyageComplete() {
             </p>
             <div style="font-size: 1em; opacity: 0.7; line-height: 1.6;">
                 <p>🚀 探索了太阳系的壮丽景象</p>
-                <p>🌍 见证了地球在宇宙中的位置</p>
+                <p>🌍 观看了地球在宇宙中的位置</p>
                 <p>✨ 体验了流畅的3D动画效果</p>
             </div>
             <div style="margin-top: 40px; font-size: 0.9em; opacity: 0.6;">
