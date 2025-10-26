@@ -1,0 +1,528 @@
+/* ===== 全局样式 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: #000000;
+    color: #00FFFF;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: relative;
+}
+
+/* ===== MOSS 登录界面 ===== */
+.login-container {
+    text-align: center;
+    z-index: 10;
+    position: relative;
+    background: radial-gradient(ellipse at center, rgba(0, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.8) 70%);
+    padding: 60px;
+    border-radius: 20px;
+    border: 2px solid rgba(0, 255, 255, 0.3);
+    box-shadow: 
+        0 0 50px rgba(0, 255, 255, 0.4),
+        inset 0 0 30px rgba(0, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    animation: moss-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes moss-glow {
+    0% {
+        box-shadow: 
+            0 0 50px rgba(0, 255, 255, 0.4),
+            inset 0 0 30px rgba(0, 255, 255, 0.1);
+        border-color: rgba(0, 255, 255, 0.3);
+    }
+    100% {
+        box-shadow: 
+            0 0 80px rgba(0, 255, 255, 0.6),
+            inset 0 0 50px rgba(0, 255, 255, 0.2);
+        border-color: rgba(0, 255, 255, 0.5);
+    }
+}
+
+.command-prompt {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #00FFFF;
+    text-shadow: 
+        0 0 10px #00FFFF,
+        0 0 20px #00FFFF,
+        0 0 30px #00FFFF;
+    letter-spacing: 2px;
+    animation: moss-blink 2s ease-in-out infinite;
+}
+
+@keyframes moss-blink {
+    0%, 50% { opacity: 1; }
+    25%, 75% { opacity: 0.7; }
+}
+
+.cursor {
+    display: inline-block;
+    width: 12px;
+    height: 24px;
+    background-color: #00FFFF;
+    margin-left: 5px;
+    animation: blink 1s infinite;
+    box-shadow: 
+        0 0 10px #00FFFF,
+        0 0 20px #00FFFF;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.input-display {
+    font-size: 18px;
+    color: #FFFFFF;
+    margin-top: 15px;
+    min-height: 25px;
+    text-shadow: 0 0 8px #FFFFFF;
+    letter-spacing: 1px;
+}
+
+.error-text {
+    color: #FF4444 !important;
+    text-shadow: 
+        0 0 10px #FF4444,
+        0 0 20px #FF4444 !important;
+    animation: error-flash 0.5s ease-in-out 3;
+}
+
+@keyframes error-flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* ===== 粒子背景系统 ===== */
+.particles-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.particle-transition {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #00FFFF;
+    border-radius: 50%;
+    box-shadow: 0 0 4px #00FFFF;
+    pointer-events: none;
+    animation: particle-float 4s linear infinite;
+}
+
+@keyframes particle-float {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ===== 登录转场动画 ===== */
+.login-fadeout {
+    animation: loginFadeOut 2s ease-out forwards;
+}
+
+@keyframes loginFadeOut {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+
+/* ===== CRT 显示器效果 ===== */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(transparent 50%, rgba(0, 255, 0, 0.03) 50%),
+        linear-gradient(90deg, transparent 50%, rgba(255, 0, 0, 0.03) 50%);
+    background-size: 100% 4px, 4px 100%;
+    pointer-events: none;
+    z-index: 1000;
+    animation: flicker 0.15s infinite linear;
+}
+
+@keyframes flicker {
+    0% { opacity: 1; }
+    98% { opacity: 1; }
+    99% { opacity: 0.98; }
+    100% { opacity: 1; }
+}
+
+/* ===== 航程引导模块样式 ===== */
+.voyage-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 100;
+    overflow: hidden;
+}
+
+/* 3D场景画布 */
+.voyage-container canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* 航程引导UI叠加层 */
+.voyage-ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 101;
+}
+
+/* 航程标题 */
+.voyage-title {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #00ff88;
+    font-family: 'Courier New', monospace;
+    font-size: 2.5rem;
+    text-align: center;
+    text-shadow: 0 0 20px #00ff88;
+    opacity: 0;
+    animation: voyageTitleFadeIn 3s ease-in-out forwards;
+}
+
+/* 航程描述文本 */
+.voyage-description {
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #88ccff;
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    text-align: center;
+    max-width: 80%;
+    line-height: 1.6;
+    opacity: 0;
+    animation: voyageDescFadeIn 3s ease-in-out 2s forwards;
+}
+
+/* 跳过按钮 */
+.voyage-skip {
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+    color: #666;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: color 0.3s ease;
+}
+
+.voyage-skip:hover {
+    color: #00ff88;
+}
+
+/* 动画定义 */
+@keyframes voyageTitleFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes voyageDescFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    100% {
+        opacity: 0.8;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .voyage-title {
+        font-size: 1.8rem;
+        top: 15%;
+    }
+    
+    .voyage-description {
+        font-size: 1rem;
+        bottom: 25%;
+        max-width: 90%;
+    }
+}
+.main-console {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    background: #000000;
+    color: #00FFFF;
+    font-family: 'Courier New', monospace;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-console.active {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    grid-template-rows: 60px 1fr 40px;
+    grid-template-areas:
+        "header sidebar"
+        "content sidebar"
+        "footer sidebar";
+    animation: console-activate 1s ease-out;
+}
+
+@keyframes console-activate {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ===== 控制台头部 ===== */
+.console-header {
+    grid-area: header;
+    background: linear-gradient(90deg, #001122 0%, #003344 100%);
+    border-bottom: 2px solid #00FFFF;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 2px 10px rgba(0, 255, 255, 0.3);
+}
+
+.console-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #00FFFF;
+    text-shadow: 0 0 10px #00FFFF;
+}
+
+.system-status {
+    margin-left: auto;
+    font-size: 12px;
+    color: #00FF00;
+}
+
+/* ===== 主要内容区域 ===== */
+.console-content {
+    grid-area: content;
+    background: #000000;
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 2px solid #00FFFF;
+}
+
+.timeline-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.timeline-item {
+    margin-bottom: 30px;
+    padding: 15px;
+    border-left: 3px solid #00FFFF;
+    background: rgba(0, 255, 255, 0.05);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.timeline-item:hover {
+    background: rgba(0, 255, 255, 0.1);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.timeline-date {
+    color: #00FF00;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.timeline-title {
+    color: #FFFFFF;
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.timeline-description {
+    color: #CCCCCC;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* ===== 侧边栏 ===== */
+.console-sidebar {
+    grid-area: sidebar;
+    background: linear-gradient(180deg, #001122 0%, #000000 100%);
+    border-left: 2px solid #00FFFF;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.sidebar-section {
+    margin-bottom: 30px;
+}
+
+.sidebar-title {
+    color: #00FFFF;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sidebar-content {
+    color: #CCCCCC;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.command-list {
+    list-style: none;
+}
+
+.command-list li {
+    margin-bottom: 8px;
+    color: #00FF00;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.command-list li:hover {
+    color: #00FFFF;
+    text-shadow: 0 0 5px #00FFFF;
+}
+
+/* ===== 控制台底部 ===== */
+.console-footer {
+    grid-area: footer;
+    background: linear-gradient(90deg, #001122 0%, #003344 100%);
+    border-top: 2px solid #00FFFF;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-size: 12px;
+}
+
+.footer-info {
+    color: #00CCCC;
+}
+
+.footer-status {
+    margin-left: auto;
+    color: #00FF00;
+}
+
+/* ===== 响应式设计 ===== */
+@media (max-width: 768px) {
+    .main-console.active {
+        grid-template-columns: 1fr;
+        grid-template-rows: 60px 1fr 200px 40px;
+        grid-template-areas:
+            "header"
+            "content"
+            "sidebar"
+            "footer";
+    }
+    
+    .console-content {
+        border-right: none;
+        border-bottom: 2px solid #00FFFF;
+    }
+    
+    .console-sidebar {
+        border-left: none;
+        border-top: 2px solid #00FFFF;
+    }
+    
+    .login-container {
+        padding: 40px 20px;
+        margin: 20px;
+    }
+    
+    .command-prompt {
+        font-size: 20px;
+    }
+}
+
+/* ===== 滚动条样式 ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00FFFF;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #00CCCC;
+}
+
+/* ===== 选择文本样式 ===== */
+::selection {
+    background: rgba(0, 255, 255, 0.3);
+    color: #FFFFFF;
+}

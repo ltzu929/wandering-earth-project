@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 
+        MOSS 纪念档案馆 - 主页面
+        项目代号：MOSS 纪念档案馆：人类文明数字遗产
+        
+        核心概念："以最理性的交互，探寻最感性的记忆"
+        
+        技术架构：
+        - HTML5 语义化结构
+        - CSS3 模块化样式
+        - 原生 JavaScript ES6+ 模块化开发
+        - 无外部框架依赖（除字体）
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="MOSS 纪念档案馆：探索人类文明数字遗产的交互式体验">
+    <meta name="keywords" content="MOSS,流浪地球,科幻,交互,档案馆,人类文明">
+    <meta name="author" content="MOSS Archive Team">
+    
+    <title>MOSS 纪念档案馆 - 人类文明数字遗产</title>
+    
+    <!-- 引入模块化样式文件 -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <!-- CRT 老式显示器效果叠加层 -->
+    <div class="crt-overlay" aria-hidden="true"></div>
+    
+    <!-- 模块一：MOSS 认证协议界面 -->
+    <div class="login-container" id="loginContainer">
+        <div class="command-prompt" role="banner">等待指令输入...</div>
+        <div class="cursor" aria-hidden="true">█</div>
+        <div class="input-display" id="inputDisplay" role="textbox" aria-label="命令输入显示"></div>
+    </div>
+
+    <!-- 模块二：航程引导 3D 场景容器 -->
+    <div class="voyage-container" id="voyageContainer" style="display: none;">
+        <!-- Three.js 3D 场景将在这里渲染 -->
+    </div>
+
+    <!-- 
+        JavaScript 模块加载
+        采用模块化架构，便于维护和扩展
+    -->
+    
+    <!-- Three.js 3D图形库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- 认证模块 - 处理登录验证逻辑 -->
+    <script src="js/auth.js"></script>
+    
+    <!-- 航程引导模块 - 3D太阳系场景动画 -->
+    <script src="js/voyage.js"></script>
+    
+    <!-- 主控台模块 - 管理主界面交互 -->
+    <script src="js/console.js"></script>
+    
+    <!-- 主应用初始化脚本 -->
+    <script>
+        /**
+         * MOSS 档案馆主应用
+         * 负责协调各个模块的初始化和交互
+         */
+        
+        // 应用状态管理
+        const AppState = {
+            currentModule: 'auth',          // 当前活跃模块
+            isInitialized: false,           // 初始化状态
+            modules: {}                     // 模块注册表
+        };
+        
+        /**
+         * 应用初始化函数
+         * 在页面加载完成后执行
+         */
+        function initializeApp() {
+            console.log('🚀 正在启动 MOSS 纪念档案馆系统...');
+            
+            try {
+                // 初始化认证模块
+                if (window.AuthModule) {
+                    window.AuthModule.init();
+                    window.AuthModule.show(); // 显示认证模块
+                    AppState.modules.auth = window.AuthModule;
+                    console.log('✅ 认证模块初始化完成');
+                }
+                
+                // 预初始化航程引导模块
+                if (window.VoyageModule) {
+                    window.VoyageModule.init();
+                    AppState.modules.voyage = window.VoyageModule;
+                    console.log('✅ 航程引导模块预加载完成');
+                }
+                
+                // 预初始化主控台模块（但不显示）
+                if (window.ConsoleModule) {
+                    window.ConsoleModule.init();
+                    AppState.modules.console = window.ConsoleModule;
+                    console.log('✅ 主控台模块预加载完成');
+                }
+                
+                // 标记应用已初始化
+                AppState.isInitialized = true;
+                
+                // 设置全局错误处理
+                setupGlobalErrorHandling();
+                
+                console.log('🎉 MOSS 系统启动完成！');
+                console.log('💡 请输入 "login" 开始体验');
+                
+            } catch (error) {
+                console.error('❌ 系统初始化失败:', error);
+                showSystemError('系统初始化失败，请刷新页面重试');
+            }
+        }
+        
+        /**
+         * 设置全局错误处理
+         */
+        function setupGlobalErrorHandling() {
+            // 捕获未处理的 JavaScript 错误
+            window.addEventListener('error', function(event) {
+                console.error('🚨 系统错误:', event.error);
+                // 在生产环境中，这里可以发送错误报告
+            });
+            
+            // 捕获未处理的 Promise 拒绝
+            window.addEventListener('unhandledrejection', function(event) {
+                console.error('🚨 未处理的 Promise 错误:', event.reason);
+                event.preventDefault();
+            });
+        }
+        
+        /**
+         * 显示系统错误信息
+         * @param {string} message - 错误消息
+         */
+        function showSystemError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(255, 65, 54, 0.1);
+                border: 1px solid #FF4136;
+                color: #FF4136;
+                padding: 20px;
+                border-radius: 5px;
+                font-family: 'Roboto Mono', monospace;
+                text-align: center;
+                z-index: 9999;
+            `;
+            errorDiv.innerHTML = `
+                <h3>⚠️ 系统错误</h3>
+                <p>${message}</p>
+            `;
+            document.body.appendChild(errorDiv);
+        }
+        
+        /**
+         * 模块切换函数
+         * @param {string} fromModule - 源模块名称
+         * @param {string} toModule - 目标模块名称
+         */
+        function switchModule(fromModule, toModule) {
+            console.log(`🔄 模块切换: ${fromModule} -> ${toModule}`);
+            
+            // 隐藏当前模块
+            if (AppState.modules[fromModule] && AppState.modules[fromModule].hide) {
+                AppState.modules[fromModule].hide();
+            }
+            
+            // 显示目标模块
+            if (AppState.modules[toModule] && AppState.modules[toModule].show) {
+                AppState.modules[toModule].show();
+                AppState.currentModule = toModule;
+            }
+        }
+        
+        // 页面加载完成后初始化应用
+        window.addEventListener('load', initializeApp);
+        
+        // 导出全局应用接口
+        window.MossApp = {
+            state: AppState,
+            switchModule: switchModule,
+            showError: showSystemError
+        };
+        
+        // 开发模式下的调试工具
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            console.log('🔧 开发模式已启用');
+            
+            // 提供调试快捷方式
+            window.debug = {
+                resetAuth: () => AppState.modules.auth?.reset(),
+                switchToConsole: () => switchModule('auth', 'console'),
+                getState: () => AppState
+            };
+        }
+    </script>
+</body>
+</html>
