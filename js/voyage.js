@@ -349,30 +349,66 @@ function completeVoyageAnimation() {
         setTimeout(() => {
             voyageContainer.remove();
             
-            // 切换到主控台
-            transitionToMainConsole();
+            // 航程引导完成，显示结束信息
+            showVoyageComplete();
         }, 1000);
     }
 }
 
 /**
- * 切换到主控台
+ * 显示航程引导完成信息
  */
-function transitionToMainConsole() {
-    console.log('🎯 从航程引导切换到主控台');
+function showVoyageComplete() {
+    console.log('🎯 航程引导体验完成');
     
-    // 显示主控台
-    const mainConsole = document.querySelector('.main-console');
-    if (mainConsole) {
-        mainConsole.classList.add('active');
-        
-        // 初始化主控台（如果存在）
-        if (typeof initConsole === 'function') {
-            initConsole();
-        }
-    }
+    // 创建完成页面
+    const completeDiv = document.createElement('div');
+    completeDiv.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #00FFFF;
+        font-family: 'Courier New', monospace;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 1s ease-in;
+    `;
     
-    console.log('✅ 主控台激活完成');
+    completeDiv.innerHTML = `
+        <div style="text-align: center; max-width: 600px; padding: 40px;">
+            <h1 style="font-size: 2.5em; margin-bottom: 30px; text-shadow: 0 0 20px #00FFFF;">
+                🌌 航程引导完成
+            </h1>
+            <p style="font-size: 1.2em; line-height: 1.8; margin-bottom: 40px; opacity: 0.9;">
+                感谢您体验 MOSS 纪念档案馆的航程引导模块。<br>
+                您已经完成了从太阳系全景到地球特写的虚拟旅程。
+            </p>
+            <div style="font-size: 1em; opacity: 0.7; line-height: 1.6;">
+                <p>🚀 探索了太阳系的壮丽景象</p>
+                <p>🌍 见证了地球在宇宙中的位置</p>
+                <p>✨ 体验了流畅的3D动画效果</p>
+            </div>
+            <div style="margin-top: 40px; font-size: 0.9em; opacity: 0.6;">
+                <p>按 F5 刷新页面重新体验</p>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(completeDiv);
+    
+    // 淡入效果
+    setTimeout(() => {
+        completeDiv.style.opacity = '1';
+    }, 100);
+    
+    console.log('✅ 航程引导体验结束');
 }
 
 /**

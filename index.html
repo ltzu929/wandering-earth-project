@@ -58,9 +58,6 @@
     <!-- 航程引导模块 - 3D太阳系场景动画 -->
     <script src="js/voyage.js"></script>
     
-    <!-- 主控台模块 - 管理主界面交互 -->
-    <script src="js/console.js"></script>
-    
     <!-- 主应用初始化脚本 -->
     <script>
         /**
@@ -96,13 +93,6 @@
                     window.VoyageModule.init();
                     AppState.modules.voyage = window.VoyageModule;
                     console.log('✅ 航程引导模块预加载完成');
-                }
-                
-                // 预初始化主控台模块（但不显示）
-                if (window.ConsoleModule) {
-                    window.ConsoleModule.init();
-                    AppState.modules.console = window.ConsoleModule;
-                    console.log('✅ 主控台模块预加载完成');
                 }
                 
                 // 标记应用已初始化
