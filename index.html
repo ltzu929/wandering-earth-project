@@ -51,12 +51,17 @@
     
     <!-- Three.js 3D图形库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     
     <!-- 认证模块 - 处理登录验证逻辑 -->
     <script src="js/auth.js"></script>
     
-    <!-- 航程引导模块 - 3D太阳系场景动画 -->
-    <script src="js/voyage.js"></script>
+    <!-- 航程引导模块 - 3D太阳系场景动画（模块化版本） -->
+    <script src="js/voyage-core.js"></script>
+    <script src="js/voyage-planets.js"></script>
+    <script src="js/voyage-earth.js"></script>
+    <script src="js/voyage-animation.js"></script>
+    <script src="js/voyage-main.js"></script>
     
     <!-- 主应用初始化脚本 -->
     <script>
@@ -88,8 +93,74 @@
                     console.log('✅ 认证模块初始化完成');
                 }
                 
-                // 预初始化航程引导模块
-                if (window.VoyageModule) {
+                // 预初始化航程引导模块（模块化版本）
+                if (window.VoyageMain && window.initVoyage) {
+                    // 创建兼容层，适配原有的VoyageModule接口
+                    window.VoyageModule = {
+                        init: () => {
+                            console.log('✅ 航程引导模块预加载完成');
+                            return true;
+                        },
+                        show: async () => {
+                            console.log('🚀 启动航程引导模块...');
+                            const voyageContainer = document.getElementById('voyageContainer');
+                            if (voyageContainer) {
+                                voyageContainer.style.display = 'block';
+                                
+                                // 检查必要的依赖
+                                if (typeof THREE === 'undefined') {
+                                    throw new Error('Three.js 库未加载');
+                                }
+                                
+                                if (typeof THREE.OrbitControls === 'undefined') {
+                                    throw new Error('OrbitControls 未加载');
+                                }
+                                
+                                // 检查模块是否加载
+                                const requiredModules = [
+                                    'createScene',
+                                    'createSolarSystem', 
+                                    'createEarth',
+                                    'TimelineManager',
+                                    'VoyageMain'
+                                ];
+                                
+                                for (const moduleName of requiredModules) {
+                                    if (typeof window[moduleName] === 'undefined') {
+                                        console.error(`模块 ${moduleName} 未加载`);
+                                        throw new Error(`模块 ${moduleName} 未加载`);
+                                    }
+                                }
+                                
+                                const voyage = await window.initVoyage('voyageContainer');
+                                if (voyage) {
+                                    voyage.play();
+                                    window.voyageInstance = voyage;
+                                    console.log('✅ 航程引导模块启动成功');
+                                } else {
+                                    throw new Error('航程引导模块初始化失败');
+                                }
+                            }
+                        },
+                        hide: () => {
+                            const voyageContainer = document.getElementById('voyageContainer');
+                            if (voyageContainer) {
+                                voyageContainer.style.display = 'none';
+                            }
+                            if (window.voyageInstance) {
+                                window.voyageInstance.pause();
+                            }
+                        },
+                        skipAnimation: () => {
+                            if (window.voyageInstance) {
+                                window.voyageInstance.reset();
+                            }
+                        },
+                        isActive: () => {
+                            return window.voyageInstance && window.voyageInstance.timelineManager && window.voyageInstance.timelineManager.isPlaying;
+                        }
+                    };
+                    
                     window.VoyageModule.init();
                     AppState.modules.voyage = window.VoyageModule;
                     console.log('✅ 航程引导模块预加载完成');

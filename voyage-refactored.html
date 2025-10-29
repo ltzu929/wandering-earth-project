@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流浪地球 - 重构版本</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        #voyage-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            z-index: 1000;
+        }
+        
+        .error {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1001;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="voyage-container">
+        <div class="loading" id="loading">正在加载流浪地球动画系统...</div>
+        <div class="error" id="error-display"></div>
+    </div>
+
+    <!-- Three.js 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- 模块化的JavaScript文件 -->
+    <script src="js/voyage-core.js"></script>
+    <script src="js/voyage-planets.js"></script>
+    <script src="js/voyage-earth.js"></script>
+    <script src="js/voyage-animation.js"></script>
+    <script src="js/voyage-main.js"></script>
+
+    <script>
+        // 错误处理
+        function showError(message) {
+            const errorDisplay = document.getElementById('error-display');
+            errorDisplay.textContent = message;
+            errorDisplay.style.display = 'block';
+            console.error(message);
+        }
+
+        function hideLoading() {
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.style.display = 'none';
+            }
+        }
+
+        // 全局错误处理
+        window.addEventListener('error', (event) => {
+            showError(`JavaScript错误: ${event.message}`);
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            showError(`未处理的Promise错误: ${event.reason}`);
+        });
+
+        // 初始化动画系统
+        async function startVoyage() {
+            try {
+                console.log('开始初始化流浪地球动画系统...');
+                
+                // 检查必要的依赖
+                if (typeof THREE === 'undefined') {
+                    throw new Error('Three.js 库未加载');
+                }
+                
+                if (typeof THREE.OrbitControls === 'undefined') {
+                    throw new Error('OrbitControls 未加载');
+                }
+                
+                // 检查模块是否加载
+                const requiredModules = [
+                    'createScene',
+                    'createSolarSystem', 
+                    'createEarth',
+                    'TimelineManager',
+                    'VoyageMain'
+                ];
+                
+                for (const moduleName of requiredModules) {
+                    if (typeof window[moduleName] === 'undefined') {
+                        throw new Error(`模块 ${moduleName} 未加载`);
+                    }
+                }
+                
+                // 初始化动画系统
+                const voyage = await initVoyage('voyage-container');
+                
+                if (voyage) {
+                    hideLoading();
+                    console.log('流浪地球动画系统启动成功！');
+                    
+                    // 自动开始播放
+                    setTimeout(() => {
+                        voyage.play();
+                    }, 1000);
+                    
+                } else {
+                    throw new Error('动画系统初始化失败');
+                }
+                
+            } catch (error) {
+                hideLoading();
+                showError(`初始化失败: ${error.message}`);
+            }
+        }
+
+        // 页面加载完成后启动
+        document.addEventListener('DOMContentLoaded', () => {
+            // 延迟启动，确保所有资源加载完成
+            setTimeout(startVoyage, 500);
+        });
+
+        // 键盘快捷键
+        document.addEventListener('keydown', (event) => {
+            if (!window.voyageInstance) return;
+            
+            switch (event.code) {
+                case 'Space':
+                    event.preventDefault();
+                    // 播放/暂停
+                    if (voyageInstance.timelineManager.isPlaying) {
+                        voyageInstance.pause();
+                    } else {
+                        voyageInstance.play();
+                    }
+                    break;
+                    
+                case 'KeyR':
+                    event.preventDefault();
+                    // 重置
+                    voyageInstance.reset();
+                    break;
+                    
+                case 'KeyC':
+                    event.preventDefault();
+                    // 切换相机动画
+                    if (voyageInstance.cameraController.isAnimating) {
+                        voyageInstance.cameraController.stopAnimation();
+                    } else {
+                        voyageInstance.cameraController.startAnimation();
+                    }
+                    break;
+            }
+        });
+
+        // 性能监控
+        let frameCount = 0;
+        let lastTime = performance.now();
+        
+        function monitorPerformance() {
+            frameCount++;
+            const currentTime = performance.now();
+            
+            if (currentTime - lastTime >= 1000) {
+                const fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                console.log(`FPS: ${fps}`);
+                
+                if (fps < 30) {
+                    console.warn('性能警告: FPS低于30');
+                }
+                
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+            
+            requestAnimationFrame(monitorPerformance);
+        }
+        
+        // 启动性能监控
+        monitorPerformance();
+    </script>
+</body>
+</html>

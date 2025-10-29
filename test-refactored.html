@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重构测试页面</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        
+        #test-container {
+            width: 800px;
+            height: 600px;
+            border: 1px solid #333;
+            margin: 20px 0;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid green;
+        }
+        
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid red;
+        }
+        
+        .info {
+            background: rgba(0, 0, 255, 0.2);
+            border: 1px solid blue;
+        }
+    </style>
+</head>
+<body>
+    <h1>流浪地球重构版本测试</h1>
+    
+    <div id="test-results"></div>
+    
+    <div id="test-container"></div>
+
+    <!-- Three.js 库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- 模块化的JavaScript文件 -->
+    <script src="js/voyage-core.js"></script>
+    <script src="js/voyage-planets.js"></script>
+    <script src="js/voyage-earth.js"></script>
+    <script src="js/voyage-animation.js"></script>
+    <script src="js/voyage-main.js"></script>
+
+    <script>
+        const results = document.getElementById('test-results');
+        
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function runTests() {
+            addResult('开始测试重构后的模块...', 'info');
+            
+            // 测试 Three.js 加载
+            if (typeof THREE !== 'undefined') {
+                addResult('✓ Three.js 加载成功', 'success');
+            } else {
+                addResult('✗ Three.js 加载失败', 'error');
+                return;
+            }
+            
+            // 测试 OrbitControls 加载
+            if (typeof THREE.OrbitControls !== 'undefined') {
+                addResult('✓ OrbitControls 加载成功', 'success');
+            } else {
+                addResult('✗ OrbitControls 加载失败', 'error');
+            }
+            
+            // 测试核心模块
+            const coreModules = [
+                'VOYAGE_CONFIG',
+                'createScene',
+                'createStarField',
+                'createNebula',
+                'handleResize'
+            ];
+            
+            coreModules.forEach(module => {
+                if (typeof window[module] !== 'undefined') {
+                    addResult(`✓ 核心模块 ${module} 加载成功`, 'success');
+                } else {
+                    addResult(`✗ 核心模块 ${module} 加载失败`, 'error');
+                }
+            });
+            
+            // 测试行星模块
+            const planetModules = [
+                'PLANET_CONFIG',
+                'createSolarSystem',
+                'createSun',
+                'createPlanets',
+                'setupLighting',
+                'updatePlanetOrbits'
+            ];
+            
+            planetModules.forEach(module => {
+                if (typeof window[module] !== 'undefined') {
+                    addResult(`✓ 行星模块 ${module} 加载成功`, 'success');
+                } else {
+                    addResult(`✗ 行星模块 ${module} 加载失败`, 'error');
+                }
+            });
+            
+            // 测试地球模块
+            const earthModules = [
+                'EARTH_CONFIG',
+                'createEarth',
+                'updateEarthTrajectory'
+            ];
+            
+            earthModules.forEach(module => {
+                if (typeof window[module] !== 'undefined') {
+                    addResult(`✓ 地球模块 ${module} 加载成功`, 'success');
+                } else {
+                    addResult(`✗ 地球模块 ${module} 加载失败`, 'error');
+                }
+            });
+            
+            // 测试动画模块
+            const animationModules = [
+                'ANIMATION_CONFIG',
+                'CameraController',
+                'TimelineManager',
+                'ParticleEffectManager',
+                'UIController'
+            ];
+            
+            animationModules.forEach(module => {
+                if (typeof window[module] !== 'undefined') {
+                    addResult(`✓ 动画模块 ${module} 加载成功`, 'success');
+                } else {
+                    addResult(`✗ 动画模块 ${module} 加载失败`, 'error');
+                }
+            });
+            
+            // 测试主模块
+            const mainModules = [
+                'VoyageMain',
+                'initVoyage'
+            ];
+            
+            mainModules.forEach(module => {
+                if (typeof window[module] !== 'undefined') {
+                    addResult(`✓ 主模块 ${module} 加载成功`, 'success');
+                } else {
+                    addResult(`✗ 主模块 ${module} 加载失败`, 'error');
+                }
+            });
+            
+            // 尝试创建基本场景
+            try {
+                const scene = createScene();
+                if (scene && scene.type === 'Scene') {
+                    addResult('✓ 场景创建测试成功', 'success');
+                } else {
+                    addResult('✗ 场景创建测试失败', 'error');
+                }
+            } catch (error) {
+                addResult(`✗ 场景创建测试失败: ${error.message}`, 'error');
+            }
+            
+            // 尝试初始化完整系统
+            try {
+                addResult('开始初始化完整系统...', 'info');
+                initVoyage('test-container').then(voyage => {
+                    if (voyage) {
+                        addResult('✓ 完整系统初始化成功！', 'success');
+                        addResult('重构测试完成 - 所有模块工作正常', 'success');
+                    } else {
+                        addResult('✗ 完整系统初始化失败', 'error');
+                    }
+                }).catch(error => {
+                    addResult(`✗ 完整系统初始化失败: ${error.message}`, 'error');
+                });
+            } catch (error) {
+                addResult(`✗ 完整系统初始化失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 页面加载完成后运行测试
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runTests, 1000);
+        });
+    </script>
+</body>
+</html>
