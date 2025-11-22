@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN" class="no-scroll-effects">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0e14" />
+    <title>完整时间线 · 流浪地球主题站</title>
+    <meta name="description" content="流浪地球航线与文明进程完整时间线，提供更细致的工程与叙事节点。" />
+
+    <!-- 样式文件：基础样式、UI组件与动画（中文注释） -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/ui.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <!-- 完整时间线页面专用样式：列表与详情布局（中文注释） -->
+    <link rel="stylesheet" href="css/timeline.css" />
+  </head>
+  <body>
+    <!-- 页面导航（简化版）：提供返回首页与关键技术入口（中文注释） -->
+    <header id="site-header" class="site-header">
+      <nav class="nav">
+        <div class="logo">流浪地球</div>
+        <ul class="nav-list">
+          <li><a href="index.html#overview">返回首页 · 时间线</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <!-- 页面主标题与筛选控件（中文注释） -->
+      <section id="timeline" class="section section-dark">
+        <div class="container">
+          <h1 class="section-title reveal">完整时间线 · 让地球远航</h1>
+
+          <!-- 已移除筛选控件：根据需求去掉类别过滤（中文注释） -->
+
+          <!-- 布局：左侧为年份列表，右侧为详情面板（中文注释） -->
+          <div class="timeline-layout">
+            <aside class="timeline-nav" aria-label="年份列表">
+              <!-- 年份列表由脚本渲染，保证数据与视图解耦（中文注释） -->
+              <ul id="timeline-year-list" class="year-list" role="list"></ul>
+            </aside>
+            <section id="timeline-detail" class="timeline-detail" aria-live="polite">
+              <h2 class="timeline-detail-title">选择左侧年份查看详情</h2>
+              <p class="timeline-detail-text">点击年份项后，右侧会展示该年份的故事与工程节点。</p>
+            </section>
+          </div>
+
+          <!-- 操作区：返回首页与跳转关键技术（中文注释） -->
+          <div class="section-actions" style="margin-top:24px;">
+            <a class="btn btn-outline focus-visible" href="index.html#overview" aria-label="返回首页世界观">返回首页</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 页面复用统一的 BGM 设置（中文注释） -->
+    <audio id="ambience" src="assets/audio/indexbgm.mp3" preload="auto" autoplay loop></audio>
+
+    <!-- 入口脚本：渲染完整时间线与交互（ES Module，中文注释） -->
+    <script type="module">
+      import { initAudio } from './js/modules/audio.js';
+      import { initScrollAnimations } from './js/modules/scroll-animations.js';
+      import { initTimelineFull } from './js/modules/timeline-full.js';
+
+      // 初始化通用模块（中文注释）
+      initAudio({ audioSelector: '#ambience' });
+      initScrollAnimations({ selector: '.reveal', activeClass: 'reveal-active' });
+
+      // 初始化完整时间线（中文注释）
+      initTimelineFull({
+        listSelector: '#timeline-year-list',
+        detailSelector: '#timeline-detail'
+      });
+    </script>
+  </body>
+  </html>

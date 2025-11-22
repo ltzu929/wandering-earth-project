@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-scroll-effects">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>设定百科 · 流浪地球</title>
+    <meta name="description" content="世界观设定百科：按分类浏览与搜索设定词条，不涉及历史时间线。" />
+    <!-- 样式：复用站点的基础样式与UI组件（中文注释） -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/ui.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+  </head>
+  <body>
+    <!-- 页面导航（简化版）：返回首页与设定入口（中文注释） -->
+    <header id="site-header">
+      <nav class="nav">
+        <ul class="nav-list">
+          <li><a href="index.html#settings">返回首页 · 世界观</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <!-- 设定百科主区块（中文注释） -->
+      <section id="settings-encyclopedia" class="section">
+        <div class="container">
+          <h1 class="section-title">设定百科</h1>
+
+          <!-- 结果区：卡片网格（中文注释） -->
+          <div id="settings-catalog-grid" class="card-grid" aria-live="polite"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 页面脚本（中文注释）：仅加载百科页所需模块 -->
+    <script type="module">
+      import { initNav } from './js/modules/nav.js';
+      import { initScrollAnimations } from './js/modules/scroll-animations.js';
+      import { settingsData } from './js/data/settingsData.js';
+      import { initSettingsPage } from './js/settings-page.js';
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // 导航与滚动动画初始化（中文注释）
+        initNav();
+        initScrollAnimations({ selector: '.reveal', activeClass: 'reveal-active' });
+
+        // 初始化百科页逻辑（中文注释）
+        initSettingsPage({
+          data: settingsData,
+          filterSelector: '#category-filter',
+          searchSelector: '#settings-search',
+          gridSelector: '#settings-catalog-grid'
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,212 @@
+/*
+  timeline.css —— 完整时间线页面专用样式（中文注释）
+  职责：为 timeline.html 提供清晰的左右布局、年份列表与详情面板样式。
+  范围：仅作用于 #timeline 页面段落，不影响首页 #overview。
+*/
+
+#timeline .timeline-filters {
+  display: flex; gap: 12px; align-items: center;
+  margin: 12px 0 18px;
+  color: var(--color-subtext);
+}
+#timeline .timeline-filters input { margin-right: 6px; }
+
+#timeline .timeline-layout {
+  /* 两列布局：左侧年份列表，右侧详情面板（中文注释） */
+  display: grid; grid-template-columns: 420px 1fr; gap: 24px;
+  align-items: start;
+}
+
+/* 左侧年份列表 */
+#timeline .timeline-nav {
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(16,37,58,0.25) 0%, rgba(8,11,16,0.6) 100%);
+  width: 100%;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: sticky; top: 92px; /* 与导航高度匹配，保持左侧列表随滚动固定（中文注释） */
+}
+
+/* 自定义滚动条样式（WebKit/Blink） */
+#timeline .timeline-nav::-webkit-scrollbar { width: 10px; height: 10px; }
+#timeline .timeline-nav::-webkit-scrollbar-track { background: rgba(8,11,16,0.65); border-left: 1px solid rgba(255,255,255,0.06); }
+#timeline .timeline-nav::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #29b3b1, #ff2e2e); border-radius: 8px; border: 2px solid rgba(8,11,16,0.65); }
+#timeline .timeline-nav::-webkit-scrollbar-thumb:hover { filter: brightness(1.1); }
+
+/* Firefox */
+#timeline .timeline-nav { scrollbar-width: thin; scrollbar-color: #29b3b1 rgba(8,11,16,0.65); }
+#timeline .year-list { list-style: none; padding: 24px 16px; margin: 0; position: relative; }
+/* 居中的时间脊柱（竖线），占据视觉重点（中文注释） */
+#timeline .year-list::before {
+  content: ""; position: absolute; left: 50%;
+  /* 由脚本设置起止位置：从第一个圆点到最后一个圆点（中文注释） */
+  top: var(--spine-top, 16px);
+  bottom: var(--spine-bottom, 16px);
+  width: 4px; border-radius: 2px;
+  background: linear-gradient(180deg, rgba(41,179,177,0.9) 0%, rgba(255,46,46,0.9) 100%);
+  box-shadow: 0 0 18px rgba(41,179,177,0.18);
+  /* 轻微脉冲发光动画，减弱强度与延长周期（中文注释） */
+  animation: spineGlow 5.4s ease-in-out infinite;
+}
+#timeline .year-item {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; /* 提升内部行距（中文注释） */
+  padding: 16px 80px; border-radius: 10px; cursor: pointer; text-align: center;
+  border: 1px solid transparent; margin: 12px 0; /* 增加上下间距，提升可读性（中文注释） */
+  transition: transform .48s ease, opacity .48s ease, box-shadow .18s ease, border-color .18s ease; /* 为出现动画增加过渡（中文注释） */
+}
+#timeline .year-item.tl-in-view:hover { border-color: rgba(255,255,255,0.16); transform: translateY(-1px); }
+#timeline .year-item.active {
+  border-color: rgba(41,179,177,0.65);
+  box-shadow: 0 8px 20px rgba(41,179,177,0.20);
+  /* 选中态轻微脉冲，减弱强度（中文注释） */
+  animation: nodePulse 3.2s ease-in-out infinite;
+}
+/* 时间节点圆点，位于中轴线上（中文注释） */
+#timeline .year-item::before {
+  content: ""; position: absolute; left: 50%; transform: translate(-50%, -50%);
+  top: 50%; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--color-cyan);
+  box-shadow: 0 0 0 4px rgba(41,179,177,0.18);
+  transition: box-shadow .28s ease, background .28s ease;
+}
+#timeline .year-item.active::before {
+  background: var(--color-accent);
+  box-shadow: 0 0 0 6px rgba(255,46,46,0.16), 0 0 16px rgba(255,46,46,0.45);
+}
+#timeline .year { font-family: var(--font-tech); font-size: 22px; font-weight: 700; letter-spacing: .3px; color: var(--color-text); /* 年份为主信息（中文注释） */ }
+#timeline .title { font-size: 16px; color: var(--color-subtext); /* 标题为次信息，颜色更低一档（中文注释） */ }
+
+/* 滚动出现动画：左右交替划入（中文注释） */
+#timeline .year-item.tl-appear { opacity: 0; }
+#timeline .year-item.tl-appear.tl-left { transform: translateX(-28px); }
+#timeline .year-item.tl-appear.tl-right { transform: translateX(28px); }
+#timeline .year-item.tl-in-view { opacity: 1; transform: translateX(0); }
+
+/* 右侧详情面板 */
+#timeline .timeline-detail {
+  padding: 16px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(16,37,58,0.25) 0%, rgba(8,11,16,0.6) 100%);
+  min-height: 280px;
+}
+#timeline .timeline-detail-body { margin-top: 12px; display: grid; gap: 10px; }
+#timeline .timeline-detail-body p { margin: 0; color: var(--color-text); line-height: 1.9; }
+#timeline .timeline-detail-list { margin: 10px 0 0; padding-left: 18px; }
+#timeline .timeline-detail-list li { margin: 6px 0; color: var(--color-text); }
+#timeline .timeline-detail-title { font-size: 22px; margin: 0 0 10px; }
+#timeline .timeline-detail-title::after {
+  content: ""; display: block; height: 2px; margin: 8px 0 0; border-radius: 1px;
+  background: linear-gradient(90deg, rgba(41,179,177,0.9) 0%, rgba(255,46,46,0.9) 100%);
+  opacity: .7;
+}
+#timeline .timeline-detail-text { margin: 0 0 8px; color: var(--color-subtext); }
+#timeline .timeline-detail-meta { font-size: 13px; color: var(--color-subtext); opacity: .9; }
+/* 详情区可选插图样式（中文注释） */
+#timeline .timeline-detail-image {
+  width: 100%; max-height: 300px; object-fit: cover; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12); margin: 10px 0 12px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+}
+
+/* 悬停详情弹窗样式（中文注释） */
+.timeline-popover {
+  position: fixed; z-index: 9999; max-width: 520px; width: calc(100% - 40px);
+  padding: 14px 16px; border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: linear-gradient(180deg, rgba(16,37,58,0.92) 0%, rgba(8,11,16,0.92) 100%);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.45);
+  color: var(--color-text);
+  /* 纵向布局与出现/消失动画（中文注释） */
+  display: flex; flex-direction: column; gap: 10px;
+  opacity: 0; transform: translateY(10px) scale(0.96); transform-origin: 50% 0;
+  /* 更自然的弹入/淡出曲线与时长（中文注释） */
+  transition: opacity .22s ease, transform .28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow .28s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+  pointer-events: none; /* 未可见时不响应事件（中文注释） */
+}
+.timeline-popover.is-visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.timeline-popover.swapping { opacity: .9; transform: translateY(-4px) scale(.99); transition-duration: .16s; box-shadow: 0 12px 28px rgba(0,0,0,0.40); }
+/* 退出淡出态：向上轻收缩并柔和减弱阴影（中文注释） */
+.timeline-popover.exiting { opacity: 0; transform: translateY(-6px) scale(0.98); box-shadow: 0 10px 24px rgba(0,0,0,0.35); pointer-events: none; }
+.timeline-popover.side-left { transform-origin: 100% 50%; }
+.timeline-popover.side-right { transform-origin: 0% 50%; }
+.timeline-popover.below { transform-origin: 50% 100%; }
+.timeline-popover h3 { margin: 0 0 8px; font-size: 18px; }
+.timeline-popover p { margin: 0; color: var(--color-subtext); font-size: 14px; }
+.timeline-popover img { display: block; width: 100%; max-height: 260px; object-fit: cover; border-radius: 10px; margin: 6px 0 10px; }
+.timeline-popover::after {
+  content: ""; position: absolute; width: 0; height: 0; border: 10px solid transparent;
+}
+/* 上/下箭头（中文注释） */
+.timeline-popover:not(.side-left):not(.side-right)::after { left: 50%; transform: translateX(-50%); }
+.timeline-popover::after { bottom: -20px; border-top-color: rgba(16,37,58,0.92); }
+.timeline-popover.below::after { top: -20px; bottom: auto; border-top-color: transparent; border-bottom-color: rgba(16,37,58,0.92); }
+/* 左/右箭头（中文注释） */
+.timeline-popover.side-left::after { right: -20px; top: 50%; bottom: auto; transform: translateY(-50%); border-left-color: rgba(16,37,58,0.92); border-top-color: transparent; border-bottom-color: transparent; }
+.timeline-popover.side-right::after { left: -20px; top: 50%; bottom: auto; transform: translateY(-50%); border-right-color: rgba(16,37,58,0.92); border-top-color: transparent; border-bottom-color: transparent; }
+
+/* 右侧纵向面板变体（中文注释） */
+.timeline-popover.portrait-panel {
+  /* 更窄且更高的卡片比例，靠右对齐（中文注释） */
+  max-width: 380px; width: 360px;
+  max-height: 78vh; overflow: auto;
+  /* 固定右侧时不需要箭头挂饰（中文注释） */
+}
+.timeline-popover.portrait-panel::after { display: none; }
+.timeline-popover.portrait-panel img {
+  width: 100%; max-height: 50vh; object-fit: cover;
+}
+
+/* 窄屏回退：居中显示且放宽宽度（中文注释） */
+@media (max-width: 1100px) {
+  .timeline-popover.portrait-panel {
+    max-width: min(520px, calc(100% - 40px));
+    width: min(520px, calc(100% - 40px));
+  }
+}
+
+/* 响应式优化（中文注释） */
+@media (max-width: 900px) {
+  #timeline .timeline-layout { grid-template-columns: 1fr; }
+  #timeline .timeline-nav { position: static; max-height: none; }
+}
+
+/* 在完整时间线页禁用页面级滚动吸附，避免“划一下卡一下”的感受（中文注释） */
+#timeline {
+  scroll-snap-align: none;
+  scroll-snap-stop: normal;
+}
+
+/* 为本页（timeline.html）完全取消滚动效果：覆盖全局的 smooth 与 snap（中文注释） */
+html.no-scroll-effects {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  overscroll-behavior-y: auto;
+}
+.no-scroll-effects .section,
+.no-scroll-effects .hero {
+  scroll-snap-align: none;
+  scroll-snap-stop: normal;
+  scroll-margin-top: 0;
+}
+
+/* 动画关键帧（中文注释） */
+@keyframes spineGlow {
+  0% { box-shadow: 0 0 18px rgba(41,179,177,0.18); opacity: .92; }
+  50% { box-shadow: 0 0 26px rgba(41,179,177,0.26); opacity: .98; }
+  100% { box-shadow: 0 0 18px rgba(41,179,177,0.18); opacity: .92; }
+}
+@keyframes nodePulse {
+  0% { box-shadow: 0 8px 20px rgba(41,179,177,0.20); }
+  50% { box-shadow: 0 12px 26px rgba(41,179,177,0.26); }
+  100% { box-shadow: 0 8px 20px rgba(41,179,177,0.20); }
+}
+
+/* 无动画偏好时禁用动画（中文注释） */
+@media (prefers-reduced-motion: reduce) {
+  #timeline .year-list::before,
+  #timeline .year-item.active { animation: none; }
+  #timeline .year-item { transition: none; }
+}

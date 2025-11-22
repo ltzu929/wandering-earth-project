@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0e14" />
+    <title>设定详情 · 流浪地球主题站</title>
+    <meta name="description" content="世界观设定词条详情页：展示图片、摘要、技术要点、关键事实与相关条目。" />
+    <!-- 基础样式与UI组件（中文注释） -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/ui.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <!-- 详情页专用样式（中文注释） -->
+    <link rel="stylesheet" href="css/settings-detail.css" />
+  </head>
+  <body>
+    <!-- 顶部导航（简化）：返回百科与首页（中文注释） -->
+    <header id="site-header" class="site-header">
+      <nav class="nav">
+        <div class="logo">流浪地球</div>
+        <ul class="nav-list">
+          <li><a href="index.html#overview">返回首页 · 时间线</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <!-- 详情主区块（中文注释） -->
+      <section id="setting-detail" class="section section-dark">
+        <div class="container">
+          <!-- 标题与元信息（中文注释） -->
+          <div class="detail-header reveal">
+            <div class="detail-title-wrap">
+              <h1 id="detail-title" class="section-title">设定详情</h1>
+              <span id="detail-category" class="chip"></span>
+            </div>
+          </div>
+
+          
+
+          <!-- 摘要与描述（中文注释） -->
+          <div class="detail-summary reveal">
+            <p id="detail-summary" class="lead"></p>
+            <div id="detail-description" class="detail-description"></div>
+          </div>
+
+          <!-- 关键事实/统计（中文注释） -->
+          <div class="detail-stats reveal">
+            <h2 class="sub-title">关键事实</h2>
+            <dl id="detail-stats" class="stat-grid"></dl>
+          </div>
+
+          <!-- 相关设定（中文注释） -->
+          
+
+          <!-- 参考资料（中文注释） -->
+          
+
+          
+        </div>
+      </section>
+    </main>
+
+    <!-- 页面脚本（中文注释） -->
+    <script type="module">
+      import { initScrollAnimations } from './js/modules/scroll-animations.js';
+      import { settingsData } from './js/data/settingsData.js';
+      import { initSettingsDetail } from './js/settings-detail.js';
+
+      // 初始化滚动动画（中文注释）
+      initScrollAnimations({ selector: '.reveal', activeClass: 'reveal-active' });
+
+      // 初始化详情页渲染（中文注释）
+      initSettingsDetail({
+        data: settingsData,
+        titleSelector: '#detail-title',
+        categorySelector: '#detail-category',
+        summarySelector: '#detail-summary',
+        descriptionSelector: '#detail-description',
+        statsSelector: '#detail-stats'
+      });
+    </script>
+  </body>
+  </html>

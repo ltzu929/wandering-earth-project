@@ -1,0 +1,84 @@
+/*
+  animations.css —— 统一的动画 Keyframes 与状态类（中文注释）
+  职责：定义站点中可复用的关键帧动画与特效类（如发光、扫描线）。
+*/
+
+/* 发光脉动（用于重点元素 hover/强调） */
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 0 rgba(255,46,46,0); }
+  50% { box-shadow: 0 0 24px rgba(255,46,46,0.35); }
+  100% { box-shadow: 0 0 0 rgba(255,46,46,0); }
+}
+
+/* 轻微扫描线（用于背景质感） */
+@keyframes scanLine {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 8px; }
+}
+
+/* 可选的“点火闪烁”效果（按钮点击时短暂触发） */
+.ignite-flash {
+  animation: glowPulse 900ms ease-out;
+}
+
+/* 骨架屏闪动（用于图片或内容占位） */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.04) 0%,
+    rgba(255,255,255,0.10) 20%,
+    rgba(255,255,255,0.04) 40%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1200ms linear infinite;
+}
+
+/* 页面过渡：从右到左滑入的黑色遮罩（中文注释） */
+@keyframes pageSlideRTL {
+  0% { transform: translateX(100%); opacity: 0.95; }
+  100% { transform: translateX(0);     opacity: 1; }
+}
+.page-transition-rtl {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 4000;
+  transform: translateX(100%);
+  animation: pageSlideRTL 480ms var(--easing) forwards;
+}
+@keyframes sweepLineRTL {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.page-transition-rtl::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; right: 0;
+  width: 2px;
+  background: rgba(41,179,177,0.55);
+  box-shadow: 0 0 22px rgba(41,179,177,0.45);
+  animation: sweepLineRTL 480ms linear forwards;
+}
+
+/* 首屏下滑指示器：脉冲圆环（中文注释） */
+@keyframes scrollPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.35); opacity: .9; }
+  70%  { box-shadow: 0 0 0 16px rgba(255,255,255,0); opacity: 1; }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); opacity: .9; }
+}
+
+/* 首屏下滑指示器：竖向轻微弹跳（中文注释） */
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
+
+/* 时间线箭头：弹出入场（中文注释） */
+@keyframes arrowPop {
+  0%   { transform: translateX(0) scale(0.86); opacity: 0; filter: drop-shadow(0 4px 14px rgba(41,179,177,0.18)); }
+  60%  { transform: translateX(2px) scale(1.06); opacity: 1; filter: drop-shadow(0 10px 26px rgba(41,179,177,0.35)); }
+  100% { transform: translateX(0) scale(1);    opacity: 1; filter: drop-shadow(0 6px 18px rgba(41,179,177,0.25)); }
+}

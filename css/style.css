@@ -1,0 +1,276 @@
+/*
+  style.css —— 站点基础样式与设计系统变量（中文注释）
+  职责：定义颜色、字号、间距、版式以及全局布局与背景，保证整体风格统一。
+  说明：LOGO与标题使用“流浪地球海报”字体（示例占位），请将真实字体文件放于 assets/fonts，并替换文件名。
+*/
+
+/* 引入你提供的“流浪地球海报”字体（OpenType） */
+@font-face {
+  font-family: 'XinDiZhaoMeng';
+  src: url('../assets/fonts/XinDiZhaoMeng-1.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+/* 追加一个常规字重的声明，以提高各浏览器匹配成功率 */
+@font-face {
+  font-family: 'XinDiZhaoMeng';
+  src: url('../assets/fonts/XinDiZhaoMeng-1.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* 色彩变量：冷灰背景 + 深蓝空间感 + 警示红（点火） + 科技青 */
+  --color-bg: #0b0e14;           /* 页面主背景（近黑） */
+  --color-bg-dark: #080b10;      /* 深层背景（段落交替） */
+  --color-text: #e5e7eb;         /* 主要文字（浅灰白） */
+  --color-subtext: #b8c0cc;      /* 次要文字 */
+  --color-blue: #10253a;         /* 深蓝，营造空间感 */
+  --color-accent: #ff2e2e;       /* 警示红（点火/重点） */
+  --color-cyan: #29b3b1;         /* 科技青（辅助） */
+
+  /* 版式与尺寸 */
+  /* 中文与常规正文字体（不再引用缺失的占位字体） */
+  --font-cn: 'Source Han Sans SC', 'Microsoft YaHei', system-ui, sans-serif;
+  /* 海报/LOGO 专用字体 */
+  --font-poster: 'XinDiZhaoMeng', var(--font-cn);
+  --font-tech: 'DIN', 'Orbitron', ui-monospace, monospace;
+  --max-width: 1200px;           /* 主内容最大宽度（桌面端） */
+  --section-padding: 80px;       /* 段落上下内边距 */
+  --container-padding: 24px;     /* 容器左右内边距 */
+
+  /* 动画时序（统一管理） */
+  --anim-duration: 700ms;
+  --anim-delay-step: 120ms;
+  --easing: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 全局重置与基础排版 */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  color: var(--color-text);
+  background: radial-gradient(1200px 600px at 80% -10%, #0e1726 0%, var(--color-bg) 60%), var(--color-bg);
+  font-family: var(--font-cn);
+  line-height: 1.6;
+}
+
+/* 在根元素启用滚动吸附与平滑滚动（桌面端更稳定） */
+html {
+  scroll-snap-type: y mandatory;
+  overscroll-behavior-y: none;
+  scroll-behavior: smooth;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+/* 仅在“世界观设定”段落扩大容器宽度（中文注释） */
+#settings .container { max-width: 1200px; }
+
+/* 站点头部导航（透明悬浮，滚动后加深背景） */
+.site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
+.nav {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 左侧 LOGO + 右侧导航列表，水平两端对齐 */
+  padding: 0 var(--container-padding);
+  backdrop-filter: saturate(120%) blur(6px);
+  background: linear-gradient(180deg, rgba(8,11,16,0.65) 0%, rgba(8,11,16,0.35) 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.nav.scrolled { background: rgba(8,11,16,0.85); }
+.logo {
+  /* 导航 LOGO 使用海报字体（如需与页面右下角一致的风格） */
+  font-family: var(--font-poster);
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--color-text);
+}
+.site-header .logo {
+  display: block;
+  /* 头部 LOGO 字体尺寸（提高可读性），与导航高度 72px 匹配 */
+  font-size: 32px;
+  line-height: 1; /* 避免额外行高导致垂直偏移 */
+}
+.nav-list { list-style: none; display: flex; gap: 24px; margin: 0; padding: 0; margin-left: auto; }
+.nav-list a { color: var(--color-subtext); text-decoration: none; transition: color .2s; }
+.nav-list a:hover { color: var(--color-text); }
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+
+/* 通用段落样式 */
+.section { position: relative; padding: var(--section-padding) 0; min-height: 100vh; }
+.section, .hero {
+  /* 吸附到每个段落的起始位置，并考虑固定头部的遮挡 */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  scroll-margin-top: 72px; /* 与导航高度一致 */
+}
+.section-dark { background: var(--color-bg-dark); }
+.section-title { font-size: 32px; margin: 0 0 24px; }
+.section-text { font-size: 18px; margin: 0 0 12px; color: var(--color-subtext); }
+
+/* 首屏 Hero 区域 */
+.hero { height: 100vh; display: grid; grid-template-rows: 1fr; overflow: hidden; }
+.hero-media { position: absolute; inset: 0; }
+.hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: none; }
+.hero-content {
+  position: relative; z-index: 1; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 0 24px;
+}
+.hero-logo { display: none; /* 为避免与头部 LOGO 重叠，首页品牌文字改由导航栏左侧的 .logo 呈现 */ }
+.hero-title { font-size: 48px; margin: 0 0 12px; }
+.hero-subtitle { font-size: 20px; margin: 0 0 24px; color: var(--color-subtext); }
+.hero-actions { display: flex; gap: 12px; }
+.scroll-indicator {
+  position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%);
+  color: var(--color-subtext); font-size: 20px; animation: floatDown 1.6s infinite;
+}
+
+/* 卡片栅格（世界观设定 / 角色精选 共用） */
+.card-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+}
+.card {
+  position: relative;
+  padding: 20px; border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(16,37,58,0.25) 0%, rgba(8,11,16,0.6) 100%);
+}
+.card-title { font-size: 20px; margin: 0 0 8px; }
+.card-text { margin: 0; color: var(--color-subtext); }
+
+/* 卡片分类角标 */
+.card-category {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-background);
+  background-color: var(--color-primary);
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.85;
+  transition: all 0.3s ease;
+}
+
+/* --------------------------------------------- */
+/* 世界观设定两列布局（左列表 + 右图片预览）        */
+/* 参考明日方舟 WORLD 页面风格，去除粒子，仅图片展示 */
+/* --------------------------------------------- */
+.settings-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+  position: relative;
+}
+.settings-preview {
+  min-height: 420px;
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(16,37,58,0.25) 0%, rgba(8,11,16,0.6) 100%);
+  position: relative;
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  width: 100%;
+  align-items: center;
+  border-radius: 8px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 左→右由虚到实的覆盖层（中文注释） */
+.settings-preview::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(8,11,16,0.88) 0%, rgba(8,11,16,0.55) 35%, rgba(8,11,16,0.20) 70%, rgba(8,11,16,0.00) 100%);
+  z-index: 1; pointer-events: none;
+}
+.settings-info { position: relative; z-index: 2; }
+.settings-info { padding: 24px; }
+.settings-info-title { font-size: 32px; margin: 0 0 8px; }
+.settings-info-summary { color: var(--color-subtext); margin: 0 0 10px; font-size: 16px; }
+.settings-info-desc { margin: 0; font-size: 14px; line-height: 1.8; color: var(--color-text); }
+.settings-info-stats { margin-top: 12px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; font-size: 13px; color: var(--color-subtext); }
+.settings-image-wrap { height: 100%; display: grid; place-items: center; }
+.settings-preview-image { width: 100%; height: 100%; background-size: cover; background-position: center; }
+.settings-thumbs { position: absolute; left: 16px; right: 16px; bottom: 16px; display: flex; gap: 10px; z-index: 2; overflow-x: auto; overflow-y: hidden; padding-bottom: 6px; }
+.settings-thumbs { scrollbar-width: thin; }
+.settings-thumbs::-webkit-scrollbar { height: 10px; }
+.settings-thumbs::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 8px; }
+.settings-thumbs::-webkit-scrollbar-track { background: rgba(8,11,16,0.35); }
+.thumb-item { width: 88px; height: 110px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); background: rgba(8,11,16,0.6); cursor: pointer; display: grid; grid-template-rows: 1fr auto; }
+.thumb-item .thumb-image { width: 100%; height: 100%; display: block; background-size: cover; background-position: center; }
+.thumb-item .thumb-title { font-size: 12px; padding: 6px 6px; color: var(--color-subtext); }
+.thumb-item.active { border-color: rgba(41,179,177,0.65); box-shadow: 0 8px 20px rgba(41,179,177,0.22); }
+
+/* 响应式：在较小设备上改为单列布局 */
+@media (max-width: 900px) {
+  .settings-layout { grid-template-columns: 1fr; }
+  .settings-preview { margin-top: 12px; grid-template-columns: 1fr; min-height: 360px; }
+  .settings-thumbs { position: static; padding: 10px 12px; overflow-x: auto; }
+}
+
+/* 设定百科页：控件区样式（中文注释） */
+.settings-controls {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 12px;
+  margin: 14px 0 18px;
+}
+.settings-controls select,
+.settings-controls input[type="search"] {
+  height: 36px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(8,11,16,0.55);
+  color: var(--color-text);
+  padding: 0 10px;
+}
+.settings-controls input[type="search"]::placeholder { color: var(--color-subtext); }
+
+/* 时间线（横向轨道）基础样式 */
+.timeline { position: relative; padding: 24px 0; }
+.timeline-track { height: 2px; background: linear-gradient(90deg, var(--color-blue), var(--color-accent)); opacity: 0.65; }
+.timeline-nodes { list-style: none; display: flex; gap: 32px; padding: 0; margin: 12px 0 0; }
+.timeline-node { position: relative; padding: 8px 12px; border: 1px solid rgba(255,255,255,0.08); background: rgba(8,11,16,0.6); }
+.timeline-node::before {
+  content: attr(data-year);
+  position: absolute; top: -22px; left: 0; font-family: var(--font-tech); font-size: 12px; color: var(--color-cyan);
+}
+
+/* 页脚 */
+.footer { padding: 24px 0; border-top: 1px solid rgba(255,255,255,0.06); background: rgba(8,11,16,0.6); }
+.footer small { color: var(--color-subtext); }
+
+/* 小动画：下滑指示 */
+@keyframes floatDown {
+  0% { transform: translate(-50%, 0); opacity: .6; }
+  50% { transform: translate(-50%, 6px); opacity: 1; }
+  100% { transform: translate(-50%, 0); opacity: .6; }
+}
+
+/* 页面级禁用滚动吸附（通过在 <html> 上添加 no-scroll-effects 类触发） */
+html.no-scroll-effects {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+  overscroll-behavior-y: auto;
+}
+.no-scroll-effects .section,
+.no-scroll-effects .hero {
+  scroll-snap-align: none;
+  scroll-snap-stop: normal;
+  scroll-margin-top: 0;
+}

@@ -1,0 +1,240 @@
+/*
+  ui.css —— 通用 UI 组件与工具类（中文注释）
+  职责：按钮风格、状态样式、可复用的辅助类（如 reveal 动画初始态）。
+*/
+
+/* 按钮组件：主按钮（红）、描边按钮（灰） */
+.btn {
+  position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 40px; padding: 0 18px; border-radius: 6px;
+  border: 1px solid transparent; cursor: pointer;
+  font-weight: 600; letter-spacing: .5px; text-decoration: none;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .2s ease, background .2s ease;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  color: #fff; background: var(--color-accent); border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 8px 20px rgba(255,46,46,0.25);
+}
+.btn-primary:hover { filter: brightness(1.06); }
+
+.btn-outline {
+  color: var(--color-text);
+  background: transparent; border-color: rgba(255,255,255,0.2);
+}
+.btn-outline:hover { border-color: rgba(255,255,255,0.35); }
+
+/* reveal 动画初始态（由 scroll-animations.js 触发 active 状态） */
+.reveal { opacity: 0; transform: translateY(10px); will-change: transform, opacity; }
+.reveal-active { opacity: 1; transform: none; transition: opacity var(--anim-duration) var(--easing), transform var(--anim-duration) var(--easing); }
+
+/* 简单工具类 */
+.hidden { display: none !important; }
+
+/* --------------------------------------------- */
+/* 卡片与时间线的悬停交互增强（中文注释）           */
+/* 职责：不改变结构，提升视觉反馈与可读性           */
+/* --------------------------------------------- */
+
+/* 卡片 hover：轻微上浮、边框高亮、阴影增强 */
+.card {
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.18);
+  box-shadow: 0 10px 26px rgba(10,20,35,0.35);
+  filter: saturate(1.03);
+}
+
+/* 卡片标题在 hover 时略微强调（可读性更好） */
+.card:hover .card-title, .card:hover h3 {
+  color: var(--color-text);
+}
+
+/* 时间线节点 hover：轻微上浮、辅色高亮、阴影增强 */
+.timeline-node {
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .2s ease;
+}
+.timeline-node:hover {
+  transform: translateY(-2px);
+  border-color: rgba(41,179,177,0.65);
+  box-shadow: 0 8px 20px rgba(41,179,177,0.22);
+}
+.timeline-node:hover::before {
+  opacity: 1;
+}
+
+/* 时间线容器在 hover 子项时的细微层次（可选） */
+.timeline-track:hover {
+  filter: brightness(1.02);
+}
+
+/* 图片接入预留：卡片图片样式（无图片时作为占位背景） */
+.card img.card-image {
+  display: block; width: 100%; height: 140px; object-fit: cover;
+  border-radius: 8px; margin-bottom: 10px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(41,179,177,0.08));
+}
+
+/* 无图片时的占位区块（可选使用 <div class="card-image placeholder">） */
+.card .card-image.placeholder {
+  width: 100%; height: 140px; border-radius: 8px; margin-bottom: 10px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(41,179,177,0.08));
+}
+
+/* 可聚焦元素的可见焦点（键盘导航友好） */
+.focus-visible:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------- */
+/* 右侧箭头入口（首页 #overview 专用，中文注释）         */
+/* 职责：在概述段落的操作区右侧提供简洁的“进入时间线”入口 */
+/* -------------------------------------------------- */
+#overview .section-actions { position: relative; min-height: 40px; }
+/* 固定在视窗右侧中部的大红色三角形箭头（中文注释） */
+#overview .arrow-link {
+  position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 64px; height: 64px; text-decoration: none; background: transparent; border: none;
+  z-index: 1001; /* 高于导航，避免被遮挡（中文注释） */
+  /* 仅在时间线板块出现：默认隐藏，通过 JS 加 .is-visible 时显示（中文注释） */
+  opacity: 0; pointer-events: none; transition: opacity .24s ease;
+}
+#overview .arrow-link::after {
+  content: ""; display: block; width: 60px; height: 60px;
+  /* 三角形轮廓箭头，颜色使用强调红（中文注释） */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'><polygon points='18,12 60,36 18,60' fill='none' stroke='%2329b3b1' stroke-width='6' stroke-linejoin='round' stroke-opacity='0.95'/></svg>");
+  background-repeat: no-repeat; background-position: center; background-size: 100% 100%;
+  filter: drop-shadow(0 6px 18px rgba(41,179,177,0.25));
+}
+#overview .arrow-link:hover::after { filter: drop-shadow(0 10px 26px rgba(41,179,177,0.35)); }
+#overview .arrow-link:active { transform: translateY(-50%) scale(0.98); }
+
+/* 仅在可见时添加动画与交互（中文注释） */
+#overview .arrow-link.is-visible { opacity: 1; pointer-events: auto; }
+#overview .arrow-link.is-visible::after { animation: arrowPop 420ms cubic-bezier(0.22, 1, 0.36, 1), arrowAttention 3.8s ease-in-out 600ms infinite; }
+
+#overview .arrow-link .arrow-hint {
+  position: absolute; right: 0; top: calc(100% + 10px); transform: translateY(4px);
+  padding: 10px 12px; font-size: 14px; white-space: nowrap;
+  color: var(--color-text);
+  background: rgba(8,11,16,0.85);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(10,20,35,0.35);
+  backdrop-filter: saturate(120%) blur(6px);
+  font-weight: 600; letter-spacing: .2px; text-shadow: 0 1px 2px rgba(0,0,0,.55);
+  z-index: 1002;
+  pointer-events: none; opacity: 0;
+  transition: opacity .2s ease, transform .2s ease, filter .2s ease;
+}
+#overview .arrow-link .arrow-hint::before {
+  content: ""; position: absolute; top: -6px; right: 20px;
+  border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 6px solid rgba(8,11,16,0.85);
+  filter: drop-shadow(0 2px 3px rgba(10,20,35,0.25));
+}
+#overview .arrow-link.is-visible .arrow-hint { opacity: 1; }
+#overview .arrow-link:hover .arrow-hint,
+#overview .arrow-link:focus-visible .arrow-hint { transform: translateY(0); filter: brightness(1.05); }
+
+/* 小屏设备适配：减小箭头尺寸并靠右侧边距（中文注释） */
+@media (max-width: 900px) {
+  #overview .arrow-link { right: 14px; width: 48px; height: 48px; }
+  #overview .arrow-link::after { width: 46px; height: 46px; }
+  #overview .arrow-link .arrow-hint { right: 0; top: calc(100% + 8px); font-size: 13px; padding: 8px 10px; border-radius: 14px; }
+}
+
+/* 箭头动画关键帧：同时处理 scale 与 translateX（中文注释） */
+@keyframes arrowAttention {
+  0%   { transform: translateX(0) scale(1);   opacity: .94; filter: drop-shadow(0 6px 18px rgba(255,46,46,0.25)); }
+  50%  { transform: translateX(6px) scale(1.06); opacity: 1;   filter: drop-shadow(0 10px 26px rgba(255,46,46,0.35)); }
+  100% { transform: translateX(0) scale(1);   opacity: .94; filter: drop-shadow(0 6px 18px rgba(255,46,46,0.25)); }
+}
+
+/* 尊重用户减少动画偏好：禁用动画（中文注释） */
+@media (prefers-reduced-motion: reduce) {
+  #overview .arrow-link.is-visible::after { animation: none; }
+}
+
+/* 设置页右侧箭头入口（#settings 区域） */
+#settings .arrow-link {
+  position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 64px; height: 64px; text-decoration: none; background: transparent; border: none;
+  z-index: 1001; opacity: 0; pointer-events: none; transition: opacity .24s ease;
+}
+#settings .arrow-link::after {
+  content: ""; display: block; width: 60px; height: 60px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'><polygon points='18,12 60,36 18,60' fill='none' stroke='%2329b3b1' stroke-width='6' stroke-linejoin='round' stroke-opacity='0.95'/></svg>");
+  background-repeat: no-repeat; background-position: center; background-size: 100% 100%;
+  filter: drop-shadow(0 6px 18px rgba(41,179,177,0.25));
+}
+#settings .arrow-link:hover::after { filter: drop-shadow(0 10px 26px rgba(41,179,177,0.35)); }
+#settings .arrow-link:active { transform: translateY(-50%) scale(0.98); }
+#settings .arrow-link.is-visible { opacity: 1; pointer-events: auto; }
+#settings .arrow-link.is-visible::after { animation: arrowPop 420ms cubic-bezier(0.22, 1, 0.36, 1), arrowAttention 3.8s ease-in-out 600ms infinite; }
+#settings .arrow-link .arrow-hint {
+  position: absolute; right: 0; top: calc(100% + 10px); transform: translateY(4px);
+  padding: 10px 12px; font-size: 14px; white-space: nowrap;
+  color: var(--color-text);
+  background: rgba(8,11,16,0.85);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(10,20,35,0.35);
+  backdrop-filter: saturate(120%) blur(6px);
+  font-weight: 600; letter-spacing: .2px; text-shadow: 0 1px 2px rgba(0,0,0,.55);
+  z-index: 1002; pointer-events: none; opacity: 0;
+  transition: opacity .2s ease, transform .2s ease, filter .2s ease;
+}
+#settings .arrow-link .arrow-hint::before {
+  content: ""; position: absolute; top: -6px; right: 20px;
+  border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 6px solid rgba(8,11,16,0.85);
+  filter: drop-shadow(0 2px 3px rgba(10,20,35,0.25));
+}
+#settings .arrow-link.is-visible .arrow-hint { opacity: 1; }
+#settings .arrow-link:hover .arrow-hint,
+#settings .arrow-link:focus-visible .arrow-hint { transform: translateY(0); filter: brightness(1.05); }
+@media (max-width: 900px) {
+  #settings .arrow-link { right: 14px; width: 48px; height: 48px; }
+  #settings .arrow-link::after { width: 46px; height: 46px; }
+  #settings .arrow-link .arrow-hint { right: 0; top: calc(100% + 8px); font-size: 13px; padding: 8px 10px; border-radius: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #settings .arrow-link.is-visible::after { animation: none; }
+}
+
+/* 屏幕阅读器可见性辅助（中文注释） */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap; border: 0; padding: 0; margin: -1px;
+}
+
+/* -------------------------------------------------- */
+/* 首屏下滑指示器（Hero 专用，中文注释）                 */
+/* 职责：更明显地提示“可以下滑”，仅在首屏出现             */
+/* -------------------------------------------------- */
+.hero .scroll-indicator {
+  position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%);
+  width: 56px; height: 56px; display: grid; place-items: center;
+  color: #ffffff; font-size: 22px; line-height: 1; user-select: none;
+}
+.hero .scroll-indicator::before {
+  /* 背后脉冲圆环（更显眼，中文注释） */
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(255,255,255,0.35);
+  animation: scrollPulse 1600ms ease-out infinite;
+}
+.hero .scroll-indicator {
+  /* 竖向轻微弹跳（中文注释） */
+  animation: scrollBounce 1200ms cubic-bezier(0.22, 0.66, 0.36, 1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero .scroll-indicator::before, .hero .scroll-indicator { animation: none; }
+}

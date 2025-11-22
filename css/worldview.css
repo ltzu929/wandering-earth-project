@@ -1,0 +1,260 @@
+/*
+  worldview.css —— 世界观板块专用样式（中文注释）
+  职责：增强首页“世界观”板块的视觉与信息结构，突出叙事张力与工程规模。
+  注意：仅作用于首页 #overview 区域，不影响其他板块。
+*/
+
+/* 标题与导语（更具故事感） */
+#overview {
+  background: linear-gradient(180deg, rgba(8,11,16,0.65) 0%, rgba(8,11,16,0.55) 40%, rgba(8,11,16,0.60) 100%), url('../assets/images/timeline-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#overview .overview-title { font-size: 40px; letter-spacing: 1px; }
+#overview .overview-lead {
+  font-size: 20px; color: var(--color-subtext);
+  max-width: 900px; margin: 8px 0 18px;
+}
+
+/* 三段高亮叙事：危机 / 抉择 / 行动方案 */
+#overview .overview-highlights {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+} 
+#overview .highlight-card {
+  padding: 18px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: linear-gradient(180deg, rgba(16,37,58,0.30) 0%, rgba(8,11,16,0.60) 100%);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
+}
+#overview .highlight-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.20);
+  box-shadow: 0 12px 26px rgba(10,20,35,0.35);
+  filter: saturate(1.04);
+}
+#overview .highlight-title { font-size: 18px; margin: 0 0 6px; color: var(--color-text); }
+#overview .highlight-text { margin: 0; color: var(--color-subtext); }
+
+/* 工程规模数据（强化可信度与规模感） */
+#overview .overview-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  margin-top: 20px;
+}
+#overview .stat {
+  padding: 14px; border-radius: 10px; text-align: center;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: linear-gradient(180deg, rgba(16,37,58,0.20) 0%, rgba(8,11,16,0.55) 100%);
+}
+#overview .stat-value { font-size: 24px; font-weight: 700; color: var(--color-accent); letter-spacing: .5px; }
+#overview .stat-label { font-size: 13px; color: var(--color-subtext); margin-top: 4px; }
+
+/* 引述（为叙事收尾，提升代入感） */
+#overview .overview-quote {
+  margin-top: 24px; padding-left: 14px; border-left: 3px solid rgba(41,179,177,0.65);
+  color: var(--color-subtext); font-style: italic;
+}
+
+/* 时间线详情面板（点击节点后展示） */
+#overview .timeline-detail {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: linear-gradient(180deg, rgba(16,37,58,0.25) 0%, rgba(8,11,16,0.6) 100%);
+}
+#overview .timeline-detail-title { font-size: 20px; margin: 0 0 8px; }
+#overview .timeline-detail-text { margin: 0; color: var(--color-subtext); }
+/* 详情扩展列表：关键事实（中文注释） */
+#overview .timeline-detail-list {
+  margin: 10px 0 0 0;
+  padding-left: 18px; /* 使用列表样式的缩进（中文注释） */
+}
+#overview .timeline-detail-item {
+  margin: 6px 0;
+  color: var(--color-text);
+}
+
+/* 被激活的时间线节点（可点击态） */
+#overview .timeline-node.active {
+  border-color: rgba(41,179,177,0.65);
+  box-shadow: 0 8px 20px rgba(41,179,177,0.22);
+}
+
+/* 首页时间线在窄屏下允许换行，避免拥挤（中文注释） */
+#overview .timeline {
+  /* 让整个时间线（包括轨道与刻度）作为一个整体横向滚动，保证对齐 */
+  position: relative;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#overview .timeline-track { position: relative; }
+#overview .timeline-nodes {
+  /* 节点单行显示，具体滚动由 .timeline 容器统一管理 */
+  flex-wrap: nowrap;
+  overflow: visible;
+}
+
+/* 轴刻度的样式（中文注释） */
+#overview .timeline-axis { position: relative; height: 0; }
+#overview .timeline-tick {
+  position: absolute;
+  top: -22px; /* 刻度文字位于轨道上方 */
+  transform: translateX(-50%);
+  font-family: var(--font-tech);
+  font-size: 12px;
+  color: var(--color-cyan);
+  white-space: nowrap;
+}
+#overview .timeline-tick::after {
+  /* 刻度的竖线标记（位于轨道上） */
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 18px;
+  width: 1px;
+  height: 8px;
+  background: var(--color-accent);
+  opacity: 0.8;
+}
+
+/* --------------------------------------------- */
+/* 各大势力：左侧列表 + 右侧图案面板（中文注释）          */
+/* --------------------------------------------- */
+.factions-layout {
+  display: grid;
+  grid-template-columns: 620px 1fr;
+  gap: 40px;
+  align-items: stretch;
+}
+.factions-layout .container {}
+#characters .container { max-width: 1600px; }
+#characters { background: #000; }
+.factions-list {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  position: relative;
+  isolation: isolate;
+}
+.faction-items { list-style: none; margin: 0; padding: 12px 0; }
+.faction-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border: none;
+  position: relative;
+  cursor: pointer;
+  transition: color .18s ease, opacity .18s ease;
+}
+.faction-item::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.10);
+}
+.faction-item:first-child { border-top: none; }
+.faction-title { font-size: 18px; color: var(--color-text); display: inline-block; }
+.faction-sub { font-family: var(--font-tech); font-size: 11px; color: var(--color-subtext); letter-spacing: .6px; margin-left: 8px; opacity: 0.85; }
+.faction-item:hover { opacity: 0.95; }
+.faction-item:hover .faction-title { color: var(--color-text); }
+.faction-item:hover .faction-sub { color: var(--color-cyan); }
+
+/* 列表小图标（中文注释） */
+.faction-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 6px;
+  filter: invert(1) grayscale(1) brightness(1.6) contrast(1.2);
+  mix-blend-mode: screen;
+}
+
+.faction-panel img.faction-image {
+  width: min(1000px, 92%);
+  height: 540px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+.faction-panel {
+  border: none;
+  border-radius: 0;
+  background: rgba(12,16,22,0.18);
+  min-height: 540px;
+  display: grid; place-items: center;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+.faction-panel.panel-playing { background: transparent; }
+.faction-panel.panel-playing::before { display: none; }
+.faction-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8,11,16,0.18) 0%, rgba(8,11,16,0.18) 100%);
+  pointer-events: none;
+}
+.factions-list, .faction-panel { height: 100%; }
+.faction-illustration { width: min(1100px, 98%); height: 560px; border-radius: 10px; }
+/* 右侧占位在首次进入时保持纯黑，不使用骨架闪烁 */
+#characters .faction-illustration.placeholder,
+#characters .faction-illustration.skeleton {
+  background: #000;
+  animation: none;
+}
+
+/* 鼠标跟随 LOGO（固定定位，全局叠加；中文注释） */
+.faction-follow { position: absolute; top: 0; left: 0; display: none; z-index: 1; pointer-events: none; }
+.faction-follow-img {
+  width: 220px;
+  max-width: 28vw;
+  object-fit: contain;
+  filter: invert(1) grayscale(1) brightness(1.6) contrast(1.2) drop-shadow(0 12px 28px rgba(41,179,177,0.35));
+  opacity: 0.95;
+  mix-blend-mode: screen;
+}
+
+/* 叠加层（放置在 ul 下方，但同容器中；中文注释） */
+.factions-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.factions-overlay-img {
+  position: absolute;
+  width: 240px;
+  max-width: 32vw;
+  object-fit: contain;
+  filter: invert(1) grayscale(1) brightness(1.6) contrast(1.2) drop-shadow(0 12px 28px rgba(41,179,177,0.35));
+  opacity: 0.92;
+  mix-blend-mode: screen;
+}
+/* 删除拖影样式（不再使用） */
+.faction-items { position: relative; z-index: 2; }
+
+.faction-panel-gif {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 0;
+  opacity: 0.96;
+  transition: opacity .24s ease;
+}
+/* 右侧面板 LOGO：居中显示，播放完 GIF 后淡入（中文注释） */
+.faction-panel-logo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+  opacity: 0.96;
+  filter: invert(1) grayscale(1) brightness(1.7) contrast(1.25) drop-shadow(0 14px 32px rgba(10,20,35,0.38));
+  mix-blend-mode: screen;
+  transition: opacity .24s ease;
+}
+
+.panel-playing .faction-illustration { display: none; }

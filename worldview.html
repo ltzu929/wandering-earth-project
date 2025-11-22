@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0e14" />
+    <title>世界观详情 · 流浪地球主题站</title>
+    <meta name="description" content="流浪地球世界观详情页面，提供更完整的背景设定与结构化说明。" />
+
+    <!-- 样式文件：基础样式、UI组件与动画（中文注释） -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/ui.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <!-- 世界观板块专用样式（保持详情页与首页的视觉一致性） -->
+    <link rel="stylesheet" href="css/worldview.css" />
+  </head>
+  <body>
+    <!-- 详情页导航：提供返回首页入口与简化菜单（中文注释） -->
+    <header id="site-header" class="site-header">
+      <nav class="nav">
+        <div class="logo">流浪地球</div>
+        <ul class="nav-list">
+          <li><a href="index.html#overview">返回首页</a></li>
+          <!-- 新增：完整时间线入口（中文注释） -->
+          <li><a href="timeline.html">完整时间线</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <!-- 世界观详情：结构化说明与段落（中文注释） -->
+      <section class="section section-dark">
+        <div class="container">
+          <h1 class="section-title reveal">世界观详情 · 让地球离开太阳系</h1>
+          <p class="section-text reveal">本页以电影《流浪地球/流浪地球2》为参照，呈现更完整的设定与叙事节奏：从“太阳氦闪”危机到“行星发动机”点火，再到“木星引力助推”的窗口抉择与文明秩序的延续。</p>
+
+          <h2 class="section-title reveal" style="margin-top:28px;">氦闪危机：倒计时开始</h2>
+          <p class="section-text reveal">太阳进入“氦闪”不稳定期，辐射与能量释放将重塑地表生境。人类无法在原恒星系内保障文明延续，于是提出前所未有的方案：让地球本身成为航行体。</p>
+          <p class="section-text reveal">“联合政府”组织全球资源与工业，启动行星级工程与屏障城市建设，形成多层安全冗余与代际协作体系，确保漫长航程中的社会功能与秩序稳定。</p>
+
+          <h2 class="section-title reveal" style="margin-top:28px;">地球启航：行星发动机与引力窗</h2>
+          <p class="section-text reveal">一万座“行星发动机”以聚变能源提供持续推力，地球以极低加速度长期航行。航线规划在木星等大质量天体附近设计“引力助推窗”，在窗口期完成能量交换与姿态校正。</p>
+          <p class="section-text reveal">“点火控制”采用多级联控与分区冗余，确保关键节点稳定执行。太空电梯与深空补给站构成长程运输与维护的骨干网络，支撑跨世代的工程韧性。</p>
+
+          <h2 class="section-title reveal" style="margin-top:28px;">文明延续：地下城与代际秩序</h2>
+          <p class="section-text reveal">地下城与屏障城市承载亿级人口的生产与生活，形成分布式能源与供给体系。教育、医疗、治理与法治在代际尺度上演进，确保文明在漫长航程中不失序。</p>
+          <p class="section-text reveal">我们选择的不只是工程，更是秩序与信念：在与家园同行的道路上，将技术、伦理与协作编织成文明的护网。</p>
+
+          <!-- 操作区：返回首页（中文注释） -->
+          <div class="section-actions" style="margin-top:24px;">
+            <a class="btn btn-outline focus-visible" href="index.html#overview" aria-label="返回首页世界观概述">返回首页</a>
+            <a class="btn btn-primary focus-visible" href="index.html#settings" aria-label="查看世界观设定">查看世界观设定</a>
+            <!-- 新增：完整时间线页面入口（中文注释） -->
+            <a class="btn btn-primary focus-visible" href="timeline.html" aria-label="查看完整时间线">查看完整时间线</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 网站BGM：保持一致的氛围音效设置（中文注释） -->
+    <audio id="ambience" src="assets/audio/indexbgm.mp3" preload="auto" autoplay loop></audio>
+
+    <!-- 详情页入口脚本：仅初始化必要模块（中文注释） -->
+    <script type="module" src="js/worldview.js"></script>
+  </body>
+  </html>

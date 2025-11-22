@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b0e14" />
+    <title>流浪地球主题网站</title>
+    <meta name="description" content="流浪地球主题站——视频首屏、关键技术与航线时间线展示。桌面端沉浸式视觉，保留氛围音效。" />
+
+    <!-- 样式文件：基础样式、UI组件与动画。均包含中文注释，且各司其职 -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/ui.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <!-- 世界观板块专用样式（提升叙事与吸引力） -->
+    <link rel="stylesheet" href="css/worldview.css" />
+  </head>
+  <body>
+    <!-- 首页采用首屏视频作为“主页背景”，其余板块不使用视频背景。 -->
+    <!--
+      站点导航（桌面端）：
+      - 透明悬浮，滚动后加深背景（由 nav.js 控制 .scrolled 状态）
+      - 使用已有“流浪地球海报”字体（在 style.css 中通过 @font-face 设置）
+    -->
+    <header id="site-header" class="site-header">
+      <nav class="nav">
+        <div class="logo">流浪地球</div>
+        <ul class="nav-list">
+          <li><a href="#overview">时间线</a></li>
+          <li><a href="#settings">世界观设定</a></li>
+          <li><a href="#characters">组织与计划</a></li>
+        </ul>
+        
+      </nav>
+    </header>
+
+    <main>
+      <!--
+        首屏 Hero：
+        - 视频背景（桌面端 1080p 推荐），静音自动循环播放（muted + autoplay + loop + playsinline）
+        - 如浏览器限制或资源缺失，保留渐变与噪点纹理作为降级背景
+        - 使命宣言与“点火/探索”按钮作为主要交互入口
+      -->
+      <section id="hero" class="section hero">
+        <!-- 首屏视频容器：只在主页使用，不影响后续板块 -->
+        <div class="hero-media">
+          <video id="hero-video" class="hero-video" muted autoplay loop playsinline poster="assets/images/hero-poster.jpg">
+            <source src="assets/video/hero-video.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div class="hero-content">
+          <!-- 根据你的要求，移除首屏标题/副标题/按钮，仅保留右下角品牌文字 -->
+        </div>
+        <!-- 右下角品牌文字（使用你提供的“流浪地球海报”字体） -->
+        <div class="hero-logo">流浪地球</div>
+        <div class="scroll-indicator">⌄</div>
+      </section>
+
+      <!-- 世界观：简述与视觉导入（占位内容，后续可替换真实文案与图片） -->
+      <section id="overview" class="section section-dark">
+        <div class="container">
+          <!-- 将标题与导语改为“时间线”主题（中文注释） -->
+          <h2 class="section-title overview-title reveal">时间线 · 地球远航关键节点</h2>
+          <p class="overview-lead reveal">点火向前，携家园远航。</p>
+          <!-- 合并展示：用“时间线”承载世界观，节点可点击查看详情（中文注释） -->
+          <div class="timeline reveal" aria-label="航线时间线">
+            <div class="timeline-track"></div>
+            <ul class="timeline-nodes" role="list">
+              <!-- 依据 docs/流浪地球电影编年史.md 选取的关键节点（中文注释） -->
+              <li class="timeline-node" role="button" tabindex="0" data-year="2018">太阳危机发现</li>
+              <li class="timeline-node" role="button" tabindex="0" data-year="2035">UEG 完成与《流浪地球法》确立</li>
+              <li class="timeline-node" role="button" tabindex="0" data-year="2048">MOSS 上线与数字生命计划开启</li>
+              <li class="timeline-node" role="button" tabindex="0" data-year="2058">移山唯一方案与“隔离计划”</li>
+              <li class="timeline-node" role="button" tabindex="0" data-year="2065">月球坠落危机与月核爆处置</li>
+              <li class="timeline-node" role="button" tabindex="0" data-year="2075">木星引力危机与点火计划</li>
+              <li class="timeline-node" role="button" tabindex="0" data-year="2078">太阳异常深化与长期航程阶段</li>
+            </ul>
+          </div>
+
+          <!-- 时间线详情面板：点击节点后在此展示（中文注释） -->
+          <div id="timeline-detail" class="timeline-detail reveal" aria-live="polite">
+            <h3 class="timeline-detail-title">选择一个时间点查看详情</h3>
+            <p class="timeline-detail-text">通过时间线来展开世界观：每个关键节点对应一次工程抉择与文明协作。</p>
+          </div>
+
+          <!-- 右侧箭头入口：点击进入完整时间线（中文注释） -->
+          <!-- 将箭头链接改为包含可见文字提示，让用户一目了然知道功能（中文注释） -->
+          <a class="arrow-link focus-visible" href="timeline.html" aria-label="进入完整时间线" rel="noopener">
+            <span class="visually-hidden">进入完整时间线</span>
+            <span class="arrow-hint">进入完整时间线</span>
+          </a>
+          
+        </div>
+      </section>
+
+       <!-- 世界观设定：左侧列表 + 右侧图片预览（参考明日方舟布局） -->
+      <section id="settings" class="section">
+        <div class="container">
+          <h2 class="section-title reveal">世界观设定</h2>
+          <div class="settings-layout">
+            <div id="settings-preview" class="settings-preview" aria-live="polite">
+              <div class="preview-placeholder skeleton"></div>
+            </div>
+            <div id="settings-thumbs" class="settings-thumbs" aria-label="设定缩略图"></div>
+          </div>
+          <button class="arrow-link focus-visible" type="button" aria-label="更多世界观设定" aria-hidden="true">
+            <span class="visually-hidden">更多世界观设定</span>
+            <span class="arrow-hint">更多世界观设定</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 原独立时间线段落已合并到 #overview，保留其他板块 -->
+
+      <!-- 各大势力（左侧列表 + 右侧图案面板） -->
+      <section id="characters" class="section">
+        <div class="container">
+          <h2 class="section-title reveal">组织与计划</h2>
+          <div class="factions-layout">
+            <aside class="factions-list" aria-label="组织与计划列表">
+              <ul class="faction-items" role="list">
+                <li class="faction-item reveal" data-id="organization-ueg">
+                  <span class="faction-title">联合地球政府</span>
+                  <span class="faction-sub">UEG</span>
+                </li>
+                <li class="faction-item reveal" data-id="organization-space-force">
+                  <span class="faction-title">北京航天中心</span>
+                  <span class="faction-sub">BEIJING SPACE CENTER</span>
+                </li>
+                <li class="faction-item reveal" data-id="organization-engine-consortium">
+                  <span class="faction-title">移山计划</span>
+                  <span class="faction-sub">MOUNTAIN MOVING PLAN</span>
+                </li>
+                <li class="faction-item reveal" data-id="organization-barrier-cities">
+                  <span class="faction-title">中国互联网中心北京基地</span>
+                  <span class="faction-sub">CNIC BEIJING BASE</span>
+                </li>
+                <li class="faction-item reveal" data-id="organization-digital-life">
+                  <span class="faction-title">中国科学院数字生命研究所</span>
+                  <span class="faction-sub">CAS DIGITAL LIFE INSTITUTE</span>
+                </li>
+                <li class="faction-item reveal" data-id="organization-energy-alliance">
+                  <span class="faction-title">太空电梯</span>
+                  <span class="faction-sub">SPACE ELEVATOR</span>
+                </li>
+                <li class="faction-item reveal" data-id="organization-lunar-program">
+                  <span class="faction-title">逐月计划</span>
+                  <span class="faction-sub">LUNAR PROGRAM</span>
+                </li>
+                <li class="faction-item reveal" data-id="organization-navigator-program">
+                  <span class="faction-title">领航员计划</span>
+                  <span class="faction-sub">NAVIGATOR PROGRAM</span>
+                </li>
+                <li class="faction-item reveal" data-id="organization-doorframe-robot">
+                  <span class="faction-title">门框机器人</span>
+                  <span class="faction-sub">DF ROBOT</span>
+                </li>
+                <li class="faction-item reveal" data-id="organization-quantum-lab">
+                  <span class="faction-title">智能量子计算机重点实验室</span>
+                  <span class="faction-sub">QUANTUM LAB</span>
+                </li>
+                <li class="faction-item reveal" data-id="organization-moss">
+                  <span class="faction-title">MOSS</span>
+                  <span class="faction-sub">MOSS AI</span>
+                </li>
+              </ul>
+            </aside>
+            <section class="faction-panel" aria-label="组织与计划标志与简介" data-gif="assets/images/organizations.gif">
+              <div class="faction-illustration placeholder skeleton"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 页脚极简呈现（参赛信息可后续补充） -->
+    <footer class="footer">
+      <div class="container">
+        <small>© 流浪地球主题站（参赛版）。仅用于视觉展示。</small>
+      </div>
+    </footer>
+
+    <!-- 网站BGM：进入页面自动播放并循环；资源已重命名为更兼容的简短文件名 -->
+    <audio id="ambience" src="assets/audio/indexbgm.mp3" preload="auto" autoplay loop></audio>
+
+    <!-- 入口脚本（ESM 模块化装配） -->
+    <script type="module" src="js/app.js"></script>
+  </body>
+  </html>
